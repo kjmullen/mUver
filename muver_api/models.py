@@ -10,14 +10,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, null=True, blank=True,
                                 related_name="profile")
     mover = models.BooleanField(default=False)
+    billing_saved = models.BooleanField(default=False)
 
-
+#
 # class Job(models.Model):
 #     title = models.CharField(max_length=65)
 #     description = models.CharField(max_length=300)
 #     user = models.ForeignKey(User, related_name="jobs")
 #     price = models.IntegerField()
 #     complete = models.BooleanField(default=False)
+#     in_progress = models.BooleanField(default=False)
 #     charge_id = models.CharField(max_length=60)
 #     mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
 

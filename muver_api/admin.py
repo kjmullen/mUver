@@ -4,4 +4,5 @@ from muver_api.models import UserProfile
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'mover')
+    list_display = ('id', 'user', 'mover', 'billing_saved')
+
