@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from muver_api.models import UserProfile
+from muver_api.models import UserProfile, Job
 from rest_framework import serializers
 
 
@@ -23,4 +23,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
+        fields = "__all__"
+
+
+class JobSerializer(serializers.ModelSerializer):
+
+    mover_profile = UserProfileSerializer
+
+    class Meta:
+        model = Job
         fields = "__all__"

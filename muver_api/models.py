@@ -12,16 +12,19 @@ class UserProfile(models.Model):
     mover = models.BooleanField(default=False)
     billing_saved = models.BooleanField(default=False)
 
-#
-# class Job(models.Model):
-#     title = models.CharField(max_length=65)
-#     description = models.CharField(max_length=300)
-#     user = models.ForeignKey(User, related_name="jobs")
-#     price = models.IntegerField()
-#     complete = models.BooleanField(default=False)
-#     in_progress = models.BooleanField(default=False)
-#     charge_id = models.CharField(max_length=60)
-#     mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
+    def __str__(self):
+        return self.user.username
+
+
+class Job(models.Model):
+    title = models.CharField(max_length=65)
+    description = models.CharField(max_length=300, null=True, blank=True)
+    user = models.ForeignKey(User, related_name="jobs")
+    price = models.IntegerField()
+    charge_id = models.CharField(max_length=60)
+    mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
+    complete = models.BooleanField(default=False)
+    image_url = models.URLField(null=True, blank=True)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
