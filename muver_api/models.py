@@ -26,6 +26,9 @@ class Job(models.Model):
     complete = models.BooleanField(default=False)
     image_url = models.URLField(null=True, blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):

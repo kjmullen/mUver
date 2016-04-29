@@ -28,7 +28,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
 
-    mover_profile = UserProfileSerializer
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Job
