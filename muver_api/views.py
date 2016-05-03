@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from django.core import serializers
+from django.http import HttpResponse
 from django.shortcuts import render
 from muver_api.models import UserProfile, Job
 from muver_api.permissions import IsOwnerOrReadOnly
@@ -39,15 +41,11 @@ class CreateUser(generics.CreateAPIView):
         permissions.AllowAny
     ]
 
-#
-# class DetailUserProfile(generics.RetrieveAPIView):
-#
-#     serializer_class = UserProfileSerializer
-#
-#     def get(self, request, *args, **kwargs):
-#         user = self.request.user
-#         profile = UserProfile.objects.get(user=user)
-#         return Response(profile, status=status.HTTP_200_OK)
+
+class DetailUserProfile(APIView):
+    def get(self, request):
+        serializer = UserProfileSerializer(request.user.profile)
+        return Response(serializer.data)
 
 
 class ListUserProfile(generics.ListAPIView):

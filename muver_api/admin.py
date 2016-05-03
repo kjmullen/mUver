@@ -10,4 +10,5 @@ class UserProfileAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'title', 'description', 'price',
-                    'complete', 'charge_id', 'mover_profile', 'image_url')
+                    'complete', 'destination_a', 'destination_b',
+                    'charge_id', 'mover_profile', 'image_url')

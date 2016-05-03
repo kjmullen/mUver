@@ -27,6 +27,10 @@ class Job(models.Model):
     mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
     complete = models.BooleanField(default=False)
     image_url = models.URLField(null=True, blank=True)
+    destination_a = models.CharField(max_length=80)
+    destination_b = models.CharField(max_length=80)
+    #confirmation_user = models.BooleanField(default=False)
+    #confirmation_mover = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
