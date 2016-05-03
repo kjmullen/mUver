@@ -51,6 +51,8 @@ class ChargeSerializer(serializers.Serializer):
                                         required=False,
                                         default=None)
     save_billing = serializers.BooleanField(default=False)
+    destination_a = serializers.CharField(max_length=80)
+    destination_b = serializers.CharField(max_length=80)
 
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -58,6 +60,8 @@ class ChargeSerializer(serializers.Serializer):
         user = validated_data['user']
         title = validated_data['title']
         description = validated_data['description']
+        destination_a = validated_data['destination_a']
+        destination_b = validated_data['destination_b']
         token = validated_data['token']
         save = validated_data['save_billing']
 
@@ -81,7 +85,9 @@ class ChargeSerializer(serializers.Serializer):
                                          price=price,
                                          charge_id=charge['id'],
                                          title=title,
-                                         description=description
+                                         description=description,
+                                         destination_a=destination_a,
+                                         destination_b=destination_b
                                          )
                 return job
             else:
@@ -97,7 +103,9 @@ class ChargeSerializer(serializers.Serializer):
                                          price=price,
                                          charge_id=charge['id'],
                                          title=title,
-                                         description=description
+                                         description=description,
+                                         destination_a=destination_a,
+                                         destination_b=destination_b
                                          )
                 return job
         except stripe.error.CardError as e:
