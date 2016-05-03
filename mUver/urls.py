@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from muver_api.views import ObtainAuthTokenWithUserID
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('muver_api.urls')),
-    url(r'^api/api-token-auth/$', obtain_auth_token),
+    url(r'^api/api-token-auth/$', ObtainAuthTokenWithUserID.as_view()),
     url(r"^docs/", include('rest_framework_swagger.urls')),
 ]

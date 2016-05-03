@@ -1,3 +1,4 @@
+import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -10,7 +11,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, null=True, blank=True,
                                 related_name="profile")
     mover = models.BooleanField(default=False)
-    billing_saved = models.BooleanField(default=False)
+    stripe_account_id = models.CharField(max_length=24, null=True, blank=True)
+    customer_id = models.CharField(max_length=24, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -28,6 +30,20 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+
+    def capture_charge(self):
+        charge = stripe.Charge.retrieve(self.charge_id)
+        mover = UserProfile.objects.get(pk=self.mover_profile.id)
+        charge['destination'] = mover.stripe_account_id
+        charge['application_fee'] = charge['amount'] * 0.20
+        charge.capture()
+        self.complete = True
+
+
+# class Review(models.Model):
+#     user = models.ForeignKey(User)
+#     rating = models.IntegerField()
+#     comment = models.CharField(max_length=150)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
