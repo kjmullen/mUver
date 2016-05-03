@@ -70,6 +70,15 @@ class ListCreateJob(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
+class JobsByUser(generics.ListAPIView):
+    serializer_class = JobSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Job.objects.filter(user=user)
+
+
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer

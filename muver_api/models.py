@@ -29,6 +29,8 @@ class Job(models.Model):
     image_url = models.URLField(null=True, blank=True)
     destination_a = models.CharField(max_length=80)
     destination_b = models.CharField(max_length=80)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    modified_at = models.DateTimeField(auto_now=True)
     #confirmation_user = models.BooleanField(default=False)
     #confirmation_mover = models.BooleanField(default=False)
 
