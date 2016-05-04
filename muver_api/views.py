@@ -86,7 +86,7 @@ class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrMoverOrReadOnly,)
 
     # def get_permissions(self):
-    #     if self.request.user.mover_profile:
+    #     if self.request.job.mover_profile:
     #         permission_classes = (IsAuthenticatedOrReadOnly,)
     #     else:
     #         permission_classes = (IsOwnerOrReadOnly,)
