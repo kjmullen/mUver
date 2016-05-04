@@ -13,6 +13,7 @@ class UserProfile(models.Model):
     mover = models.BooleanField(default=False)
     stripe_account_id = models.CharField(max_length=24, null=True, blank=True)
     customer_id = models.CharField(max_length=24, null=True, blank=True)
+    # strikes = models.OneToManyField(Strikes)
 
     def __str__(self):
         return self.user.username
@@ -30,7 +31,7 @@ class Job(models.Model):
     image_url = models.URLField(null=True, blank=True)
     destination_a = models.CharField(max_length=80)
     destination_b = models.CharField(max_length=80)
-    # distance = models.CharField(max_length=10, null=True, blank=True)
+    distance = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
     confirmation_user = models.BooleanField(default=False)
@@ -47,10 +48,10 @@ class Job(models.Model):
         charge.capture()
         self.complete = True
 
-
-# class Review(models.Model):
+#
+# class Strike(models.Model):
 #     user = models.ForeignKey(User)
-#     rating = models.IntegerField()
+#     profile = models.ForeignKey(UserProfile)
 #     comment = models.CharField(max_length=150)
 
 

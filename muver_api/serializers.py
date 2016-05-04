@@ -58,8 +58,9 @@ class ChargeSerializer(serializers.Serializer):
     save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
+    distance = serializers.CharField(max_length=10)
     phone_number = serializers.CharField(max_length=10)
-    
+
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         amount = validated_data['amount']
@@ -69,6 +70,7 @@ class ChargeSerializer(serializers.Serializer):
         phone_number = validated_data['phone_number']
         destination_a = validated_data['destination_a']
         destination_b = validated_data['destination_b']
+        distance = validated_data['distance']
         token = validated_data['token']
         save = validated_data['save_billing']
 
@@ -95,7 +97,8 @@ class ChargeSerializer(serializers.Serializer):
                                          description=description,
                                          phone_number=phone_number,
                                          destination_a=destination_a,
-                                         destination_b=destination_b
+                                         destination_b=destination_b,
+                                         distance=distance
                                          )
                 return job
             else:
@@ -114,7 +117,8 @@ class ChargeSerializer(serializers.Serializer):
                                          description=description,
                                          phone_number=phone_number,
                                          destination_a=destination_a,
-                                         destination_b=destination_b
+                                         destination_b=destination_b,
+                                         distance=distance
                                          )
                 return job
         except stripe.error.CardError as e:
