@@ -22,6 +22,7 @@ class Job(models.Model):
     title = models.CharField(max_length=65)
     description = models.CharField(max_length=300, null=True, blank=True)
     user = models.ForeignKey(User, related_name="jobs")
+    phone_number = models.CharField(max_length=10, null=True, blank=True)
     price = models.IntegerField()
     charge_id = models.CharField(max_length=60)
     mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
@@ -31,8 +32,8 @@ class Job(models.Model):
     destination_b = models.CharField(max_length=80)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
-    #confirmation_user = models.BooleanField(default=False)
-    #confirmation_mover = models.BooleanField(default=False)
+    confirmation_user = models.BooleanField(default=False)
+    confirmation_mover = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

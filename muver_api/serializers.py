@@ -53,6 +53,7 @@ class ChargeSerializer(serializers.Serializer):
     save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
+    phone_number = serializers.CharField(max_length=10)
 
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -60,6 +61,7 @@ class ChargeSerializer(serializers.Serializer):
         user = validated_data['user']
         title = validated_data['title']
         description = validated_data['description']
+        phone_number = validated_data['phone_number']
         destination_a = validated_data['destination_a']
         destination_b = validated_data['destination_b']
         token = validated_data['token']
@@ -86,6 +88,7 @@ class ChargeSerializer(serializers.Serializer):
                                          charge_id=charge['id'],
                                          title=title,
                                          description=description,
+                                         phone_number=phone_number,
                                          destination_a=destination_a,
                                          destination_b=destination_b
                                          )
@@ -104,6 +107,7 @@ class ChargeSerializer(serializers.Serializer):
                                          charge_id=charge['id'],
                                          title=title,
                                          description=description,
+                                         phone_number=phone_number,
                                          destination_a=destination_a,
                                          destination_b=destination_b
                                          )
@@ -113,6 +117,7 @@ class ChargeSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
+
 
 class StripeAccountSerializer(serializers.Serializer):
 

@@ -11,5 +11,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 class JobAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'title', 'description', 'price',
                     'complete', 'destination_a', 'destination_b',
-                    'charge_id', 'mover_profile', 'image_url', 'created_at',
-                    'modified_at')
+                    'phone_number', 'charge_id', 'mover_profile', 'image_url',
+                    'created_at', 'modified_at', 'confirmation_user',
+                    'confirmation_mover')
