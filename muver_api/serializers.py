@@ -34,7 +34,12 @@ class JobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     def update(self, instance, validated_data):
-        instance.mover_profile = validated_data['mover_profile']
+        instance.mover_profile = validated_data.get(
+            'mover_profile', instance.mover_profile)
+        instance.confirmation_mover = validated_data.get(
+            'confirmation_mover', instance.confirmation_mover)
+        instance.confirmation_user = validated_data.get(
+            'confirmation_user', instance.confirmation_user)
         return super().update(instance, validated_data)
 
     class Meta:
@@ -54,6 +59,10 @@ class ChargeSerializer(serializers.Serializer):
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
     phone_number = serializers.CharField(max_length=10)
+    # confirmation_mover = serializers.BooleanField(required=False,
+    #                                               default=False)
+    # confirmation_user = serializers.BooleanField(required=False,
+    #                                              default=False)
 
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY

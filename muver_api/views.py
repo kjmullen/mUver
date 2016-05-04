@@ -43,6 +43,7 @@ class CreateUser(generics.CreateAPIView):
 
 
 class DetailUserProfile(APIView):
+
     def get(self, request):
         serializer = UserProfileSerializer(request.user.profile)
         return Response(serializer.data)
@@ -82,7 +83,7 @@ class JobsByUser(generics.ListAPIView):
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     # def get_permissions(self):
     #     if self.request.user.mover_profile:
