@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render
 from muver_api.models import UserProfile, Job
-from muver_api.permissions import IsOwnerOrReadOnly, IsMoverOrReadOnly
+from muver_api.permissions import IsOwnerOrReadOnly, IsOwnerOrMoverOrReadOnly
 from muver_api.serializers import UserSerializer, UserProfileSerializer, \
     JobSerializer, ChargeSerializer, StripeAccountSerializer
 from rest_framework import generics, status
@@ -83,8 +83,7 @@ class JobsByUser(generics.ListAPIView):
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    permission_classes = (IsOwnerOrReadOnly,
-                          IsMoverOrReadOnly)
+    permission_classes = (IsOwnerOrMoverOrReadOnly,)
 
     # def get_permissions(self):
     #     if self.request.user.mover_profile:
