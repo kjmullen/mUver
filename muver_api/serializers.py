@@ -59,11 +59,7 @@ class ChargeSerializer(serializers.Serializer):
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
     phone_number = serializers.CharField(max_length=10)
-    # confirmation_mover = serializers.BooleanField(required=False,
-    #                                               default=False)
-    # confirmation_user = serializers.BooleanField(required=False,
-    #                                              default=False)
-
+    
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         amount = validated_data['amount']
