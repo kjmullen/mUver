@@ -61,14 +61,6 @@ class JobSerializer(serializers.ModelSerializer):
                 and validated_data.get('confirmation_mover',
                                        instance.confirmation_mover):
 
-            # mover = UserProfile.objects.get(pk=instance.mover_profile.id)
-            # destination = mover.stripe_account_id
-            # charge.destination = mover.stripe_account_id
-            # charge['destination'] = mover.stripe_account_id
-
-            # charge.application_fee = charge.amount * 0.20
-            # charge['application_fee'] = charge.amount * 0.20
-
             charge = stripe.Charge.retrieve(instance.charge_id)
             fee = int(charge.amount * 0.20)
             charge.capture(application_fee=fee)
@@ -76,9 +68,6 @@ class JobSerializer(serializers.ModelSerializer):
 
             instance.save()
             return instance
-
-            # instance.capture_charge()
-            # charge.save(instance.charge_id)
 
         return super().update(instance, validated_data)
 
@@ -112,7 +101,6 @@ class ChargeSerializer(serializers.Serializer):
         destination_b = validated_data['destination_b']
         distance = validated_data['distance']
         token = validated_data['token']
-
 
         try:
             # if save:
