@@ -40,9 +40,16 @@ class JobSerializer(serializers.ModelSerializer):
     # save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
-    distance = serializers.CharField(max_length=10)
+    distance = serializers.CharField(max_length=10,
+                                     required=False,
+                                     default=None,
+                                     allow_blank=True,
+                                     allow_null=True)
     phone_number = serializers.CharField(max_length=10)
-    image_url = serializers.URLField(required=False, default=None)
+    image_url = serializers.URLField(required=False,
+                                     default=None,
+                                     allow_blank=True,
+                                     allow_null=True)
 
     def create(self, validated_data):
 
