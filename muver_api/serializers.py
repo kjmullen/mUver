@@ -32,6 +32,42 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(read_only=True)
+    price = serializers.IntegerField()
+    title = serializers.CharField(max_length=65)
+    description = serializers.CharField(max_length=300,
+                                        required=False,
+                                        default=None)
+    # save_billing = serializers.BooleanField(default=False)
+    destination_a = serializers.CharField(max_length=80)
+    destination_b = serializers.CharField(max_length=80)
+    distance = serializers.CharField(max_length=10)
+    phone_number = serializers.CharField(max_length=10)
+    image_url = serializers.URLField(required=False, default=None)
+
+    def create(self, validated_data):
+
+        price = validated_data['price']
+        user = validated_data['user']
+        title = validated_data['title']
+        description = validated_data['description']
+        phone_number = validated_data['phone_number']
+        destination_a = validated_data['destination_a']
+        destination_b = validated_data['destination_b']
+        distance = validated_data['distance']
+        image_url = validated_data['image_url']
+
+        job = Job.objects.create(user=user,
+                                 price=price,
+                                 title=title,
+                                 description=description,
+                                 image_url=image_url,
+                                 phone_number=phone_number,
+                                 destination_a=destination_a,
+                                 destination_b=destination_b,
+                                 distance=distance
+                                 )
+
+        return job
 
     def update(self, instance, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -76,84 +112,113 @@ class JobSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ChargeSerializer(serializers.Serializer):
+class CustomerSerializer(serializers.Serializer):
 
     token = serializers.CharField(max_length=60)
-    amount = serializers.IntegerField()
-    title = serializers.CharField(max_length=65)
-    description = serializers.CharField(max_length=300,
-                                        required=False,
-                                        default=None)
-    save_billing = serializers.BooleanField(default=False)
-    destination_a = serializers.CharField(max_length=80)
-    destination_b = serializers.CharField(max_length=80)
-    distance = serializers.CharField(max_length=10)
-    phone_number = serializers.CharField(max_length=10)
 
     def create(self, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
-        amount = validated_data['amount']
         user = validated_data['user']
-        title = validated_data['title']
-        description = validated_data['description']
-        phone_number = validated_data['phone_number']
-        destination_a = validated_data['destination_a']
-        destination_b = validated_data['destination_b']
-        distance = validated_data['distance']
         token = validated_data['token']
 
         try:
-            # if save:
+            if not user.profile.customer_id:
+                customer = stripe.Customer.create(
+                    source=token,
+                    description="mUver customer"
+                )
+                user.profile.customer_id = customer['id']
+                user.profile.save()
+                return user.profile.customer_id
 
-            customer = stripe.Customer.create(
-                source=token,
-                description="mUver customer"
-            )
-            user.profile.customer_id = customer['id']
-            user.profile.save()
+            else:
+                return user.profile.customer_id
 
-            # charge = stripe.Charge.create(
-            #     amount=amount * 100,
-            #     currency="usd",
-            #     customer=customer['id'],
-            #     capture=False
-            # )
-            # price = charge['amount'] / 100
-            job = Job.objects.create(user=user,
-                                     price=amount,
-                                     title=title,
-                                     description=description,
-                                     phone_number=phone_number,
-                                     destination_a=destination_a,
-                                     destination_b=destination_b,
-                                     distance=distance
-                                     )
-            return job
-            # else:
-            #     charge = stripe.Charge.create(
-            #         amount=amount * 100,
-            #         currency='usd',
-            #         source=token,
-            #         description="Charge for mUver job",
-            #         capture=False,
-            #     )
-            #     price = charge['amount'] / 100
-            #     job = Job.objects.create(user=user,
-            #                              price=price,
-            #                              charge_id=charge['id'],
-            #                              title=title,
-            #                              description=description,
-            #                              phone_number=phone_number,
-            #                              destination_a=destination_a,
-            #                              destination_b=destination_b,
-            #                              distance=distance
-            #                              )
-            #     return job
         except stripe.error.CardError as e:
             pass
 
     def update(self, instance, validated_data):
         pass
+
+
+# class ChargeSerializer(serializers.Serializer):
+#
+#     token = serializers.CharField(max_length=60)
+#     amount = serializers.IntegerField()
+#     title = serializers.CharField(max_length=65)
+#     description = serializers.CharField(max_length=300,
+#                                         required=False,
+#                                         default=None)
+#     save_billing = serializers.BooleanField(default=False)
+#     destination_a = serializers.CharField(max_length=80)
+#     destination_b = serializers.CharField(max_length=80)
+#     distance = serializers.CharField(max_length=10)
+#     phone_number = serializers.CharField(max_length=10)
+#
+#     def create(self, validated_data):
+#         stripe.api_key = settings.STRIPE_SECRET_KEY
+#         amount = validated_data['amount']
+#         user = validated_data['user']
+#         title = validated_data['title']
+#         description = validated_data['description']
+#         phone_number = validated_data['phone_number']
+#         destination_a = validated_data['destination_a']
+#         destination_b = validated_data['destination_b']
+#         distance = validated_data['distance']
+#         token = validated_data['token']
+#
+#         try:
+#             # if save:
+#
+#             customer = stripe.Customer.create(
+#                 source=token,
+#                 description="mUver customer"
+#             )
+#             user.profile.customer_id = customer['id']
+#             user.profile.save()
+#
+#             # charge = stripe.Charge.create(
+#             #     amount=amount * 100,
+#             #     currency="usd",
+#             #     customer=customer['id'],
+#             #     capture=False
+#             # )
+#             # price = charge['amount'] / 100
+#             job = Job.objects.create(user=user,
+#                                      price=amount,
+#                                      title=title,
+#                                      description=description,
+#                                      phone_number=phone_number,
+#                                      destination_a=destination_a,
+#                                      destination_b=destination_b,
+#                                      distance=distance
+#                                      )
+#             return job
+#             # else:
+#             #     charge = stripe.Charge.create(
+#             #         amount=amount * 100,
+#             #         currency='usd',
+#             #         source=token,
+#             #         description="Charge for mUver job",
+#             #         capture=False,
+#             #     )
+#             #     price = charge['amount'] / 100
+#             #     job = Job.objects.create(user=user,
+#             #                              price=price,
+#             #                              charge_id=charge['id'],
+#             #                              title=title,
+#             #                              description=description,
+#             #                              phone_number=phone_number,
+#             #                              destination_a=destination_a,
+#             #                              destination_b=destination_b,
+#             #                              distance=distance
+#             #                              )
+#             #     return job
+#         except stripe.error.CardError as e:
+#             pass
+#
+#     def update(self, instance, validated_data):
+#         pass
 
 
 class StripeAccountSerializer(serializers.Serializer):

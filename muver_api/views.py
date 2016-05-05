@@ -5,7 +5,8 @@ from django.shortcuts import render
 from muver_api.models import UserProfile, Job
 from muver_api.permissions import IsOwnerOrReadOnly, IsOwnerOrMoverOrReadOnly
 from muver_api.serializers import UserSerializer, UserProfileSerializer, \
-    JobSerializer, ChargeSerializer, StripeAccountSerializer
+    JobSerializer, StripeAccountSerializer, \
+    CustomerSerializer
 from rest_framework import generics, status
 from rest_framework import permissions
 from rest_framework.authtoken.models import Token
@@ -114,6 +115,19 @@ class CreateCharge(APIView):
                         status=status.HTTP_400_BAD_REQUEST)
 
 
+class CreateCustomer(APIView):
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def post(self, request):
+        serializer = CustomerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(None, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
 class CreateStripeAccount(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
@@ -124,15 +138,3 @@ class CreateStripeAccount(APIView):
             return Response(None, status=status.HTTP_201_CREATED)
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
-
-
-# class CreateCaptureCharge(APIView):
-#
-#     permission_classes = (IsAuthenticatedOrReadOnly,)
-#
-#     def post(self, request):
-#         serializer = CaptureChargeSerializer(data=request.data)
-#         if serializer.is_valid():
-#             return Response(None, status=status.HTTP_200_OK)
-#         return Response(serializer.errors,
-#                         status=status.HTTP_400_BAD_REQUEST)
