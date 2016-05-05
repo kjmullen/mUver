@@ -80,6 +80,15 @@ class JobsByUser(generics.ListAPIView):
         return Job.objects.filter(user=user)
 
 
+class CompletedJobsByUser(generics.ListAPIView):
+    serializer_class = JobSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Job.objects.filter(user=user).filter(complete=True)
+
+
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer

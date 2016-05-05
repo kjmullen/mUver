@@ -41,13 +41,14 @@ class Job(models.Model):
         return self.title
 
     def capture_charge(self):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
         charge = stripe.Charge.retrieve(self.charge_id)
         mover = UserProfile.objects.get(pk=self.mover_profile.id)
-        charge['destination'] = mover.stripe_account_id
-        charge['application_fee'] = charge['amount'] * 0.20
-        charge.capture()
+        charge.destination = mover.stripe_account_id
+        charge.application_fee = charge.amount * 0.20
         self.complete = True
-
+        charge.capture()
+        return charge
 #
 # class Strike(models.Model):
 #     user = models.ForeignKey(User)

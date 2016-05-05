@@ -34,12 +34,37 @@ class JobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     def update(self, instance, validated_data):
+        # stripe.api_key = settings.STRIPE_SECRET_KEY
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
+        # if validated_data['mover_profile']:
+        #     pass
         instance.confirmation_mover = validated_data.get(
             'confirmation_mover', instance.confirmation_mover)
         instance.confirmation_user = validated_data.get(
             'confirmation_user', instance.confirmation_user)
+        if validated_data.get('confirmation_user', instance.confirmation_user)\
+                and validated_data.get('confirmation_mover',
+                                       instance.confirmation_mover):
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            mover = UserProfile.objects.get(pk=instance.mover_profile.id)
+            charge = stripe.Charge.retrieve(instance.charge_id)
+
+            destination = mover.stripe_account_id
+            # charge.destination = mover.stripe_account_id
+            # charge['destination'] = mover.stripe_account_id
+
+            fee = int(charge.amount * 0.20)
+            # charge.application_fee = charge.amount * 0.20
+            # charge['application_fee'] = charge.amount * 0.20
+
+            charge.capture(destination=destination, application_fee=fee)
+            instance.complete = True
+            # charge.save(instance.charge_id)
+            instance.save()
+            return instance
+            # instance.capture_charge()
+
         return super().update(instance, validated_data)
 
     class Meta:
