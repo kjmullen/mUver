@@ -37,17 +37,16 @@ class JobSerializer(serializers.ModelSerializer):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
-        if validated_data['mover_profile']:
+        if validated_data.get('mover_profile', instance.mover_profile)\
+                and not instance.charge_id:
             customer = instance.user.profile.customer_id
             mover = UserProfile.objects.get(pk=instance.mover_profile.id)
-            fee = int(instance.price * 0.20)
             charge = stripe.Charge.create(
                 amount=instance.price * 100,
                 currency="usd",
                 customer=customer,
                 destination=mover.stripe_account_id,
                 capture=False,
-                application_fee=fee
             )
             instance.charge_id = charge['id']
             instance.save()
@@ -64,17 +63,19 @@ class JobSerializer(serializers.ModelSerializer):
             # charge.destination = mover.stripe_account_id
             # charge['destination'] = mover.stripe_account_id
 
-            # fee = int(charge.amount * 0.20)
             # charge.application_fee = charge.amount * 0.20
             # charge['application_fee'] = charge.amount * 0.20
 
             charge = stripe.Charge.retrieve(instance.charge_id)
-            charge.capture()
+            fee = int(charge.amount * 0.20)
+            charge.capture(application_fee=fee)
             instance.complete = True
-            # charge.save(instance.charge_id)
+
             instance.save()
             return instance
+
             # instance.capture_charge()
+            # charge.save(instance.charge_id)
 
         return super().update(instance, validated_data)
 
@@ -108,7 +109,7 @@ class ChargeSerializer(serializers.Serializer):
         destination_b = validated_data['destination_b']
         distance = validated_data['distance']
         token = validated_data['token']
-        save = validated_data['save_billing']
+
 
         try:
             # if save:
@@ -129,7 +130,6 @@ class ChargeSerializer(serializers.Serializer):
             # price = charge['amount'] / 100
             job = Job.objects.create(user=user,
                                      price=amount,
-                                     charge_id=customer['id'],
                                      title=title,
                                      description=description,
                                      phone_number=phone_number,
