@@ -25,7 +25,7 @@ class Job(models.Model):
     user = models.ForeignKey(User, related_name="jobs")
     phone_number = models.CharField(max_length=10, null=True, blank=True)
     price = models.IntegerField()
-    charge_id = models.CharField(max_length=60)
+    charge_id = models.CharField(max_length=60, null=True, blank=True)
     mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
     complete = models.BooleanField(default=False)
     image_url = models.URLField(null=True, blank=True)
