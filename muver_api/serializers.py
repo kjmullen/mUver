@@ -1,9 +1,11 @@
 import time
 import stripe
+import geocoder
 from django.conf import settings
 from django.contrib.auth.models import User
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
+from django.contrib.gis.geos import Point, GEOSGeometry
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -40,7 +42,6 @@ class JobSerializer(serializers.ModelSerializer):
     # save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
-    distance = serializers.CharField(max_length=10)
     phone_number = serializers.CharField(max_length=10)
     image_url = serializers.URLField(required=False, default=None)
 
@@ -51,8 +52,16 @@ class JobSerializer(serializers.ModelSerializer):
         title = validated_data['title']
         description = validated_data['description']
         phone_number = validated_data['phone_number']
-        destination_a = validated_data['destination_a']
-        destination_b = validated_data['destination_b']
+        dest_a = geocoder.google(validated_data['destination_a'])
+        destin_a = [str(item) for item in dest_a.latlng]
+        dest_b = geocoder.google(validated_data['destination_b'])
+        destin_b = [str(item) for item in dest_b.latlng]
+        destinatio_a = " ".join(destin_a)
+        destinatio_b = " ".join(destin_b)
+        destinat_a = GEOSGeometry('SRID=4326;POINT({})'.format(destinatio_a))
+        destinat_b = GEOSGeometry('SRID=4326;POINT({})'.format(destinatio_b))
+        # destinat_a.distance(destinat_b) * 100
+
         distance = validated_data['distance']
         image_url = validated_data['image_url']
 
@@ -62,9 +71,9 @@ class JobSerializer(serializers.ModelSerializer):
                                  description=description,
                                  image_url=image_url,
                                  phone_number=phone_number,
-                                 destination_a=destination_a,
-                                 destination_b=destination_b,
-                                 distance=distance
+                                 destination_a=", ".join(destin_a),
+                                 destination_b=", ".join(destin_b),
+                                 distance=destinat_a.distance(destinat_b) * 100
                                  )
 
         return job

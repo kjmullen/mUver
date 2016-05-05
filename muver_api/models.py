@@ -31,7 +31,7 @@ class Job(models.Model):
     image_url = models.URLField(null=True, blank=True)
     destination_a = models.CharField(max_length=80)
     destination_b = models.CharField(max_length=80)
-    distance = models.CharField(max_length=10, null=True, blank=True)
+    distance = models.CharField(max_length=20, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
     confirmation_user = models.BooleanField(default=False)
