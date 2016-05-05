@@ -37,6 +37,7 @@ class JobSerializer(serializers.ModelSerializer):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
+
         if validated_data.get('mover_profile', instance.mover_profile)\
                 and not instance.charge_id:
             customer = instance.user.profile.customer_id
@@ -48,8 +49,10 @@ class JobSerializer(serializers.ModelSerializer):
                 destination=mover.stripe_account_id,
                 capture=False,
             )
+
             instance.charge_id = charge['id']
             instance.save()
+
         instance.confirmation_mover = validated_data.get(
             'confirmation_mover', instance.confirmation_mover)
         instance.confirmation_user = validated_data.get(
