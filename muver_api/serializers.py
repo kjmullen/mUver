@@ -100,52 +100,53 @@ class ChargeSerializer(serializers.Serializer):
         save = validated_data['save_billing']
 
         try:
-            if save:
-                customer = stripe.Customer.create(
-                    source=token,
-                    description="mUver customer"
-                )
-                user.profile.customer_id = customer['id']
-                user.profile.save()
+            # if save:
 
-                charge = stripe.Charge.create(
-                    amount=amount * 100,
-                    currency="usd",
-                    customer=customer['id'],
-                    capture=False
-                )
-                price = charge['amount'] / 100
-                job = Job.objects.create(user=user,
-                                         price=price,
-                                         charge_id=charge['id'],
-                                         title=title,
-                                         description=description,
-                                         phone_number=phone_number,
-                                         destination_a=destination_a,
-                                         destination_b=destination_b,
-                                         distance=distance
-                                         )
-                return job
-            else:
-                charge = stripe.Charge.create(
-                    amount=amount * 100,
-                    currency='usd',
-                    source=token,
-                    description="Charge for mUver job",
-                    capture=False,
-                )
-                price = charge['amount'] / 100
-                job = Job.objects.create(user=user,
-                                         price=price,
-                                         charge_id=charge['id'],
-                                         title=title,
-                                         description=description,
-                                         phone_number=phone_number,
-                                         destination_a=destination_a,
-                                         destination_b=destination_b,
-                                         distance=distance
-                                         )
-                return job
+            customer = stripe.Customer.create(
+                source=token,
+                description="mUver customer"
+            )
+            user.profile.customer_id = customer['id']
+            user.profile.save()
+
+            # charge = stripe.Charge.create(
+            #     amount=amount * 100,
+            #     currency="usd",
+            #     customer=customer['id'],
+            #     capture=False
+            # )
+            # price = charge['amount'] / 100
+            job = Job.objects.create(user=user,
+                                     price=amount,
+                                     charge_id=customer['id'],
+                                     title=title,
+                                     description=description,
+                                     phone_number=phone_number,
+                                     destination_a=destination_a,
+                                     destination_b=destination_b,
+                                     distance=distance
+                                     )
+            return job
+            # else:
+            #     charge = stripe.Charge.create(
+            #         amount=amount * 100,
+            #         currency='usd',
+            #         source=token,
+            #         description="Charge for mUver job",
+            #         capture=False,
+            #     )
+            #     price = charge['amount'] / 100
+            #     job = Job.objects.create(user=user,
+            #                              price=price,
+            #                              charge_id=charge['id'],
+            #                              title=title,
+            #                              description=description,
+            #                              phone_number=phone_number,
+            #                              destination_a=destination_a,
+            #                              destination_b=destination_b,
+            #                              distance=distance
+            #                              )
+            #     return job
         except stripe.error.CardError as e:
             pass
 
