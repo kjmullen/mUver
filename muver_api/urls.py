@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from muver_api.views import CreateUser, DetailUser, ListCreateJob, \
-    RetrieveUpdateUserProfile, RetrieveUpdateDestroyJob, \
-    CreateCharge, CreateStripeAccount, ListUserProfile, DetailUserProfile, \
+    RetrieveUpdateUserProfile, RetrieveUpdateDestroyJob,\
+    CreateStripeAccount, ListUserProfile, DetailUserProfile, \
     JobsByUser, CompletedJobsByUser, CreateCustomer
 
 urlpatterns = [
@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^jobs/(?P<pk>\d+)/$', RetrieveUpdateDestroyJob.as_view(),
         name="detail_update_delete_job"),
     url(r'^customer/$', CreateCustomer.as_view(), name="create_customer"),
-    url(r'^charge/$', CreateCharge.as_view(), name="create_charge"),
+    # url(r'^charge/$', CreateCharge.as_view(), name="create_charge"),
     url(r'^stripe/$', CreateStripeAccount.as_view(), name="create_stripe"),
     # url(r'^charge/capture/$', CreateCaptureCharge.as_view(),
     #     name='capture_charge'),

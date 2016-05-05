@@ -102,17 +102,17 @@ class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     #         permission_classes = (IsOwnerOrReadOnly,)
     #     return super().get_permissions()
 
-
-class CreateCharge(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    def post(self, request):
-        serializer = ChargeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(None, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
+#
+# class CreateCharge(APIView):
+#     permission_classes = (IsAuthenticatedOrReadOnly,)
+#
+#     def post(self, request):
+#         serializer = ChargeSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=request.user)
+#             return Response(None, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,
+#                         status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateCustomer(APIView):
