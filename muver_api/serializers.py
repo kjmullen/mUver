@@ -57,9 +57,7 @@ class JobSerializer(serializers.ModelSerializer):
         dest_b = geocoder.google(validated_data['destination_b'])
         destin_b = [str(item) for item in dest_b.latlng]
         destinatio_a = (" ".join(destin_a))
-        # destinatio_a = tuple(destin_a)
         destinatio_b = (" ".join(destin_b))
-        # destinatio_b = tuple(destin_b)
         destinat_a = GEOSGeometry('POINT({})'.format(destinatio_a))
         # destinat_a = geos.Point(destinatio_a)
         destinat_b = GEOSGeometry('POINT({})'.format(destinatio_b))
