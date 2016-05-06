@@ -241,7 +241,6 @@ class StripeAccountSerializer(serializers.Serializer):
     dob_year = serializers.IntegerField()
     address_line_one = serializers.CharField(max_length=40)
     address_line_two = serializers.CharField(max_length=40,
-                                             required=False, default=None,
                                              allow_null=True, allow_blank=True)
     address_city = serializers.CharField(max_length=40)
     address_state = serializers.CharField(max_length=2)
