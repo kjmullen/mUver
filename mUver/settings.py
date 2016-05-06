@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'geocoder',
     'rest_framework',
     'rest_framework_swagger',
     'rest_framework.authtoken',
@@ -193,6 +192,12 @@ LOGGING = {
             'handlers': ['console'],
         }
     }
+    # 'loggers': {
+    #     'muver_api': {
+    #         'handlers': ['file', 'error_file', 'console'],
+    #         'level': 'DEBUG'
+    #     }
+    # }
 }
 
 # LOGGING = {
