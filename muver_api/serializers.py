@@ -1,9 +1,11 @@
+
 import time
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -304,6 +306,7 @@ class StripeAccountSerializer(serializers.Serializer):
             user = validated_data['user']
             user.profile.stripe_account_id = account['id']
             user.profile.save()
+
 
             return account
 

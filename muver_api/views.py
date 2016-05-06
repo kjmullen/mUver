@@ -1,3 +1,6 @@
+import logging
+
+from django.conf.global_settings import LOGGING
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.http import HttpResponse
@@ -14,6 +17,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+logger = logging.getLogger(__name__)
 
 
 class ObtainAuthTokenWithUserID(ObtainAuthToken):
@@ -95,6 +100,7 @@ class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = JobSerializer
     permission_classes = (IsOwnerOrMoverOrReadOnly,)
 
+
     # def get_permissions(self):
     #     if self.request.job.mover_profile:
     #         permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -124,6 +130,7 @@ class CreateCustomer(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(None, status=status.HTTP_201_CREATED)
+        logger.error(serializer.errors)
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -136,5 +143,9 @@ class CreateStripeAccount(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(None, status=status.HTTP_201_CREATED)
+
+        # logger.info("error with stripe account creation")
+        # logger.debug(serializer)
+        logger.error(serializer.errors)
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)

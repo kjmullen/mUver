@@ -1,1 +1,1 @@
-web: gunicorn mUver.wsgi —log-file -
+web: gunicorn mUver.wsgi —log-file=-
