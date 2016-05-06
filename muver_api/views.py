@@ -19,12 +19,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
-logger.info("core.views logger")  # should work
+logger.info("muver_api.views logger")  # should work
 
 
-def url_please(request):
-    logger.info("path: %s" % request.path)  # should work
-    return HttpResponse(request.path)
+# def url_please(request):
+#     logger.info("path: %s" % request.path)  # should work
+#     return HttpResponse(request.path)
 
 
 class ObtainAuthTokenWithUserID(ObtainAuthToken):
