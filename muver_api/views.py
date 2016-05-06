@@ -80,6 +80,9 @@ class ListCreateJob(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
+        
+        logger.error(serializer.errors)
+
         serializer.save(user=self.request.user)
 
 
