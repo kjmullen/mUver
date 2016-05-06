@@ -1,4 +1,3 @@
-
 import time
 import stripe
 import geocoder
@@ -7,7 +6,6 @@ from django.contrib.auth.models import User
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
 from django.contrib.gis.geos import Point, GEOSGeometry
-
 
 
 class UserSerializer(serializers.ModelSerializer):
