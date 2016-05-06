@@ -1,9 +1,12 @@
+import logging
 import time
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
+
+logger = logging.getLogger(__name__)
 
 
 class UserSerializer(serializers.ModelSerializer):
