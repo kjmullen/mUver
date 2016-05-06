@@ -1,4 +1,4 @@
-import logging
+
 import time
 import stripe
 from django.conf import settings
@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
 
-logger = logging.getLogger(__name__)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -294,7 +293,8 @@ class StripeAccountSerializer(serializers.Serializer):
             account.external_accounts.create(external_account=bank_info_dict)
 
             account.legal_entity.address.line1 = address_line_one
-            account.legal_entity.address.line2 = address_line_two
+            if address_line_two:
+                account.legal_entity.address.line2 = address_line_two
             account.legal_entity.address.postal_code = postal_code
             account.legal_entity.address.city = address_city
             account.legal_entity.address.state = address_state
@@ -304,6 +304,7 @@ class StripeAccountSerializer(serializers.Serializer):
             user = validated_data['user']
             user.profile.stripe_account_id = account['id']
             user.profile.save()
+
 
             return account
 

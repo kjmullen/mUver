@@ -1,0 +1,4 @@
+[DEBUG] 2016-05-06 11:08:44,645 views {'ssn_last_four': ['This field is required.']}
+2016-05-06 11:41:21 [36999] [INFO] pathname=/Users/KJM/theironyard/assignments/mUver/mUver/muver_api/views.py lineno=143 funcname=post This is a simple log message
+2016-05-06 11:43:21 [37049] [INFO] pathname=/Users/KJM/theironyard/assignments/mUver/mUver/muver_api/views.py lineno=142 funcname=post error with stripe account creation
+2016-05-06 11:44:07 [37064] [INFO] pathname=/Users/KJM/theironyard/assignments/mUver/mUver/muver_api/views.py lineno=143 funcname=post error with stripe account creation
