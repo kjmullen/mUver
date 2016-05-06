@@ -21,6 +21,6 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('muver_api.urls')),
-    url(r'^api/api-token-auth/$', ObtainAuthTokenWithUserID.as_view()),
+    url(r'^api/api-token-auth/$', obtain_auth_token),
     url(r"^docs/", include('rest_framework_swagger.urls')),
 ]

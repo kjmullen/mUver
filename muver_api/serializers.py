@@ -267,6 +267,8 @@ class StripeAccountSerializer(serializers.Serializer):
         postal_code = validated_data['postal_code']
         ssn_last_four = validated_data['ssn_last_four']
 
+
+
         try:
             account = stripe.Account.create(
                 country=country,
@@ -291,7 +293,8 @@ class StripeAccountSerializer(serializers.Serializer):
             account.external_accounts.create(external_account=bank_info_dict)
 
             account.legal_entity.address.line1 = address_line_one
-            account.legal_entity.address.line2 = address_line_two
+            if address_line_two:
+                account.legal_entity.address.line2 = address_line_two
             account.legal_entity.address.postal_code = postal_code
             account.legal_entity.address.city = address_city
             account.legal_entity.address.state = address_state
