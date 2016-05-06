@@ -80,7 +80,7 @@ class ListCreateJob(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        
+
         logger.error(serializer.errors)
 
         serializer.save(user=self.request.user)
@@ -140,7 +140,8 @@ class CreateCustomer(APIView):
             serializer.save(user=request.user)
             return Response(None, status=status.HTTP_201_CREATED)
 
-        logger.error(serializer.errors)
+        logger.error("ERROR: Customer stripe account creation failed with:\n"
+                     "{}\nUser: {}".format(serializer.errors, request.user))
 
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
@@ -155,7 +156,8 @@ class CreateStripeAccount(APIView):
             serializer.save(user=request.user)
             return Response(None, status=status.HTTP_201_CREATED)
 
-        logger.error(serializer.errors)
+        logger.error("ERROR: Stripe managed account creation failed with:\n"
+                     "{}\nUser: {}".format(serializer.errors, request.user))
 
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
