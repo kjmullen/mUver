@@ -136,7 +136,9 @@ class CreateCustomer(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(None, status=status.HTTP_201_CREATED)
+
         logger.error(serializer.errors)
+
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -150,9 +152,7 @@ class CreateStripeAccount(APIView):
             serializer.save(user=request.user)
             return Response(None, status=status.HTTP_201_CREATED)
 
-        # logger.info("error with stripe account creation")
-        # logger.debug(serializer)
         logger.error(serializer.errors)
-        logger.error("hello")
+
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
