@@ -153,7 +153,6 @@ class CreateStripeAccount(APIView):
         # logger.info("error with stripe account creation")
         # logger.debug(serializer)
         logger.error(serializer.errors)
-        logging.info('Hello')
-
+        logger.error("hello")
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
