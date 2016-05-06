@@ -188,6 +188,9 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'muver_api.views': {
+            'handlers': ['console'],
+        }
     }
     # 'loggers': {
     #     'muver_api': {
