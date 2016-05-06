@@ -3,8 +3,6 @@ import stripe
 import geocoder
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.gis import geos
-from django.contrib.gis.measure import D
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
 from django.contrib.gis.geos import Point, GEOSGeometry
@@ -58,17 +56,17 @@ class JobSerializer(serializers.ModelSerializer):
         destin_a = [str(item) for item in dest_a.latlng]
         dest_b = geocoder.google(validated_data['destination_b'])
         destin_b = [str(item) for item in dest_b.latlng]
-        # destinatio_a = (", ".join(destin_a))
-        destinatio_a = tuple(destin_a)
-        # destinatio_b = (", ".join(destin_b))
-        destinatio_b = tuple(destin_b)
-        # destinat_a = GEOSGeometry('POINT({})'.format(destinatio_a))
-        destinat_a = geos.Point(destinatio_a)
-        # destinat_b = GEOSGeometry('POINT({})'.format(destinatio_b))
-        destinat_b = geos.Point(destinatio_b)
+        destinatio_a = (" ".join(destin_a))
+        # destinatio_a = tuple(destin_a)
+        destinatio_b = (" ".join(destin_b))
+        # destinatio_b = tuple(destin_b)
+        destinat_a = GEOSGeometry('POINT({})'.format(destinatio_a))
+        # destinat_a = geos.Point(destinatio_a)
+        destinat_b = GEOSGeometry('POINT({})'.format(destinatio_b))
+        # destinat_b = geos.Point(destinatio_b)
         # destinat_a.distance(destinat_b) * 100
 
-        distance = D(m=destinat_a.distance(destinat_b)).mi
+        distance = int(destinat_a.distance(destinat_b) * 100 * 0.62137)
         image_url = validated_data['image_url']
 
         job = Job.objects.create(user=user,
