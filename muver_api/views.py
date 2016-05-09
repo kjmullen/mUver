@@ -95,7 +95,12 @@ class JobsByUser(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Job.objects.filter(user=user).filter(complete=False)
+        if not user.profile.mover:
+            return Job.objects.filter(user=user).filter(complete=False)
+        else:
+            profile = user.profile
+            return Job.objects.filter(mover_profile=profile)\
+                .filter(complete=False)
 
 
 class CompletedJobsByUser(generics.ListAPIView):
