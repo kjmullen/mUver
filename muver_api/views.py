@@ -85,6 +85,9 @@ class ListCreateJob(generics.ListCreateAPIView):
 
         serializer.save(user=self.request.user)
 
+    def get_queryset(self):
+        return Job.objects.filter(mover_profile=None).filter(complete=False)
+
 
 class JobsByUser(generics.ListAPIView):
     serializer_class = JobSerializer
@@ -92,7 +95,7 @@ class JobsByUser(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Job.objects.filter(user=user)
+        return Job.objects.filter(user=user).filter(complete=False)
 
 
 class CompletedJobsByUser(generics.ListAPIView):
