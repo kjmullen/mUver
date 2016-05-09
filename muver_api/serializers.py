@@ -44,9 +44,8 @@ class JobSerializer(serializers.ModelSerializer):
     # save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
-    distance = serializers.DecimalField(source='distance.mi', max_digits=10,
-                                        decimal_places=2, required=False,
-                                        read_only=True)
+    distance = serializers.CharField(required=False,
+                                     read_only=True)
     phone_number = serializers.CharField(max_length=10)
     image_url = serializers.URLField(required=False,
                                      default=None,
@@ -75,7 +74,7 @@ class JobSerializer(serializers.ModelSerializer):
         point_b = GEOSGeometry('POINT(' + str(b_lng) + ' ' + str(b_lat) + ')',
                                srid=4326)
 
-        distance = point_a.distance(point_b) * 100 * 0.62137
+        distance = int(point_a.distance(point_b) * 100 * 0.62137)
 
         job = Job.objects.create(user=user,
                                  price=price,
