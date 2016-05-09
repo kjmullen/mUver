@@ -86,13 +86,15 @@ class JobSerializer(serializers.ModelSerializer):
                                  destination_b=destination_b,
                                  distance=distance
                                  )
-
+        user.profile.in_progress = True
+        user.profile.save()
         return job
 
     def update(self, instance, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
+
 
         if validated_data.get('mover_profile', instance.mover_profile)\
                 and not instance.charge_id:
@@ -107,12 +109,27 @@ class JobSerializer(serializers.ModelSerializer):
             )
 
             instance.charge_id = charge['id']
+            mover.in_progress = True
+            mover.save()
             instance.save()
+
+        mover = UserProfile.objects.get(pk=instance.mover_profile.id)
 
         instance.confirmation_mover = validated_data.get(
             'confirmation_mover', instance.confirmation_mover)
         instance.confirmation_user = validated_data.get(
             'confirmation_user', instance.confirmation_user)
+
+        if validated_data.get('confirmation_user', instance.confirmation_user)\
+                and instance.user.profile.in_progress:
+            instance.user.profile.in_progress = False
+            instance.user.profile.save()
+
+        if validated_data.get('confirmation_mover', instance.confirmation_mover) \
+                and mover.in_progress:
+            mover.in_progress = False
+            mover.save()
+
         if validated_data.get('confirmation_user', instance.confirmation_user)\
                 and validated_data.get('confirmation_mover',
                                        instance.confirmation_mover):
