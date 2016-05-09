@@ -44,7 +44,7 @@ class JobSerializer(serializers.ModelSerializer):
     # save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
-    distance = serializers.CharField(required=False,
+    distance = serializers.CharField(max_length=20, required=False,
                                      read_only=True)
     phone_number = serializers.CharField(max_length=10)
     image_url = serializers.URLField(required=False,
