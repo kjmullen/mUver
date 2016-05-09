@@ -86,7 +86,8 @@ class ListCreateJob(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        return Job.objects.filter(mover_profile=None).filter(complete=False)
+        return Job.objects.filter(mover_profile=None).filter(complete=False)\
+            .order_by('-created_at')
 
 
 class JobsByUser(generics.ListAPIView):
