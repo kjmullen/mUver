@@ -317,6 +317,7 @@ class StripeAccountSerializer(serializers.Serializer):
 
             user = validated_data['user']
             user.profile.stripe_account_id = account['id']
+            user.profile.mover = True
             user.profile.save()
 
 
