@@ -1,7 +1,11 @@
 import time
+
+import geocoder
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import GEOSGeometry
 from muver_api.models import UserProfile, Job
 from rest_framework import serializers
 
@@ -40,11 +44,9 @@ class JobSerializer(serializers.ModelSerializer):
     # save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
-    distance = serializers.CharField(max_length=10,
-                                     required=False,
-                                     default=None,
-                                     allow_blank=True,
-                                     allow_null=True)
+    distance = serializers.DecimalField(source='distance.mi', max_digits=10,
+                                        decimal_places=2, required=False,
+                                        read_only=True)
     phone_number = serializers.CharField(max_length=10)
     image_url = serializers.URLField(required=False,
                                      default=None,
@@ -60,8 +62,20 @@ class JobSerializer(serializers.ModelSerializer):
         phone_number = validated_data['phone_number']
         destination_a = validated_data['destination_a']
         destination_b = validated_data['destination_b']
-        distance = validated_data['distance']
         image_url = validated_data['image_url']
+
+        ga = geocoder.google(destination_a)
+        gb = geocoder.google(destination_b)
+        a_lat = ga.latlng[0]
+        a_lng = ga.latlng[1]
+        b_lat = gb.latlng[0]
+        b_lng = gb.latlng[1]
+        point_a = GEOSGeometry('POINT(' + str(a_lng) + ' ' + str(a_lat) + ')',
+                               srid=4326)
+        point_b = GEOSGeometry('POINT(' + str(b_lng) + ' ' + str(b_lat) + ')',
+                               srid=4326)
+
+        distance = point_a.distance(point_b) * 100 * 0.62137
 
         job = Job.objects.create(user=user,
                                  price=price,
