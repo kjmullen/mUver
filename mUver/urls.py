@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from muver_api.views import ObtainAuthTokenWithUserID
+# from muver_api.views import ObtainAuthTokenWithUserID
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
