@@ -27,16 +27,16 @@ logger.info("muver_api.views logger")  # should work
 #     return HttpResponse(request.path)
 
 
-class ObtainAuthTokenWithUserID(ObtainAuthToken):
-   def post(self, request):
-       serializer = self.serializer_class(data=request.data)
-       serializer.is_valid(raise_exception=True)
-       user = serializer.validated_data['user']
-       token, created = Token.objects.get_or_create(user=user)
-       user_id = user.id
-       profile_id = user.profile.id
-       return Response({'token': token.key, 'id': user_id,
-                        'profile_id': profile_id})
+# class ObtainAuthTokenWithUserID(ObtainAuthToken):
+#    def post(self, request):
+#        serializer = self.serializer_class(data=request.data)
+#        serializer.is_valid(raise_exception=True)
+#        user = serializer.validated_data['user']
+#        token, created = Token.objects.get_or_create(user=user)
+#        user_id = user.id
+#        profile_id = user.profile.id
+#        return Response({'token': token.key, 'id': user_id,
+#                         'profile_id': profile_id})
 
 
 class DetailUser(generics.RetrieveAPIView):
