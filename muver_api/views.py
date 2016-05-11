@@ -110,7 +110,10 @@ class CompletedJobsByUser(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Job.objects.filter(user=user).filter(complete=True)
+        if not user.profile.mover:
+            return Job.objects.filter(user=user).filter(confirmation_user=True)
+        else:
+            return Job.objects.filter(mover_profile=user.profile.id).filter(confirmation_mover=True)
 
 
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):

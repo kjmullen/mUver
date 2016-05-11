@@ -50,11 +50,16 @@ class Job(models.Model):
         self.complete = True
         charge.capture()
         return charge
-#
-# class Strike(models.Model):
-#     user = models.ForeignKey(User)
-#     profile = models.ForeignKey(UserProfile)
-#     comment = models.CharField(max_length=150)
+
+
+class Strike(models.Model):
+    user = models.ForeignKey(User, related_name="strikes")
+    profile = models.ForeignKey(UserProfile, related_name="strikes")
+    comment = models.CharField(max_length=150)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return "Strike on {} from {}".format(self.profile, self.user)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

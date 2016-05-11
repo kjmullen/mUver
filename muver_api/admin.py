@@ -1,5 +1,5 @@
 from django.contrib import admin
-from muver_api.models import UserProfile, Job
+from muver_api.models import UserProfile, Job, Strike
 
 
 @admin.register(UserProfile)
@@ -15,3 +15,8 @@ class JobAdmin(admin.ModelAdmin):
                     'phone_number', 'charge_id', 'mover_profile', 'image_url',
                     'created_at', 'modified_at', 'confirmation_user',
                     'confirmation_mover')
+
+
+@admin.register(Strike)
+class StrikeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'profile', 'comment', 'created_at')
