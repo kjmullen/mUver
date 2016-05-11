@@ -97,11 +97,11 @@ class JobsByUser(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if not user.profile.mover:
-            return Job.objects.filter(user=user).filter(complete=False)
+            return Job.objects.filter(user=user).filter(complete=False).order_by("-modified_at")
         else:
             profile = user.profile
-            return Job.objects.filter(mover_profile=profile)\
-                .filter(complete=False)
+            return Job.objects.filter(mover_profile=profile.id)\
+                .filter(complete=False).order_by("-modified_at")
 
 
 class CompletedJobsByUser(generics.ListAPIView):
