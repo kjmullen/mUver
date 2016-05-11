@@ -22,6 +22,7 @@ class UserProfile(models.Model):
 
 class Job(models.Model):
     title = models.CharField(max_length=65)
+    pickup_for = models.CharField(max_length=30, null=True, blank=True)
     description = models.CharField(max_length=300, null=True, blank=True)
     user = models.ForeignKey(User, related_name="jobs")
     phone_number = models.CharField(max_length=10, null=True, blank=True)

@@ -38,6 +38,7 @@ class JobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     price = serializers.IntegerField()
     title = serializers.CharField(max_length=65)
+    pickup_for = serializers.CharField(max_length=30)
     description = serializers.CharField(max_length=300,
                                         required=False,
                                         default=None)
@@ -57,6 +58,7 @@ class JobSerializer(serializers.ModelSerializer):
         price = validated_data['price']
         user = validated_data['user']
         title = validated_data['title']
+        pickup_for = validated_data['pickup_for']
         description = validated_data['description']
         phone_number = validated_data['phone_number']
         destination_a = validated_data['destination_a']
@@ -79,6 +81,7 @@ class JobSerializer(serializers.ModelSerializer):
         job = Job.objects.create(user=user,
                                  price=price,
                                  title=title,
+                                 pickup_for=pickup_for,
                                  description=description,
                                  image_url=image_url,
                                  phone_number=phone_number,
