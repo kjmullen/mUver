@@ -111,9 +111,9 @@ class CompletedJobsByUser(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if not user.profile.mover:
-            return Job.objects.filter(user=user).filter(confirmation_user=True)
+            return Job.objects.filter(user=user).filter(confirmation_user=True).order_by("-modified_at")
         else:
-            return Job.objects.filter(mover_profile=user.profile.id).filter(confirmation_mover=True)
+            return Job.objects.filter(mover_profile=user.profile.id).filter(confirmation_mover=True).order_by("-modified_at")
 
 
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
