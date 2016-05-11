@@ -101,7 +101,7 @@ class JobsByUser(generics.ListAPIView):
         else:
             profile = user.profile
             return Job.objects.filter(mover_profile=profile.id)\
-                .filter(confirmation_user=False).order_by("-modified_at")
+                .filter(confirmation_mover=True).order_by("-modified_at")
 
 
 class CompletedJobsByUser(generics.ListAPIView):
