@@ -95,7 +95,6 @@ class JobSerializer(serializers.ModelSerializer):
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
 
-
         if validated_data.get('mover_profile', instance.mover_profile)\
                 and not instance.charge_id:
             customer = instance.user.profile.customer_id
@@ -159,17 +158,13 @@ class CustomerSerializer(serializers.Serializer):
         token = validated_data['token']
 
         try:
-            if not user.profile.customer_id:
-                customer = stripe.Customer.create(
-                    source=token,
-                    description="mUver customer"
-                )
-                user.profile.customer_id = customer['id']
-                user.profile.save()
-                return user.profile.customer_id
-
-            else:
-                return user.profile.customer_id
+            customer = stripe.Customer.create(
+                source=token,
+                description="mUver customer"
+            )
+            user.profile.customer_id = customer['id']
+            user.profile.save()
+            return user.profile.customer_id
 
         except stripe.error.CardError as e:
             pass
