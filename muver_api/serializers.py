@@ -193,7 +193,6 @@ class StrikeSerializer(serializers.Serializer):
 
         mover = UserProfile.objects.get(pk=profile.id)
         mover.banned = True
-        mover.user.force_logout()
         mover.save()
         return strike
 

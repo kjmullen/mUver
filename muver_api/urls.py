@@ -2,7 +2,7 @@ from django.conf.urls import url
 from muver_api.views import CreateUser, DetailUser, ListCreateJob, \
     RetrieveUpdateUserProfile, RetrieveUpdateDestroyJob,\
     CreateStripeAccount, ListUserProfile, DetailUserProfile, \
-    JobsByUser, CompletedJobsByUser, CreateCustomer
+    JobsByUser, CompletedJobsByUser, CreateCustomer, CreateStrike
 
 urlpatterns = [
     url(r'^user/$', CreateUser.as_view(), name="create_user"),
