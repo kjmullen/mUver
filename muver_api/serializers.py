@@ -97,6 +97,7 @@ class JobSerializer(serializers.ModelSerializer):
         stripe.api_key = settings.STRIPE_SECRET_KEY
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
+        # report_user = self.initial_data['report_user']
 
         if validated_data.get('mover_profile', instance.mover_profile)\
                 and not instance.charge_id:
@@ -116,6 +117,9 @@ class JobSerializer(serializers.ModelSerializer):
             instance.save()
 
         mover = UserProfile.objects.get(pk=instance.mover_profile.id)
+
+        # if report_user:
+        #
 
         instance.confirmation_mover = validated_data.get(
             'confirmation_mover', instance.confirmation_mover)
