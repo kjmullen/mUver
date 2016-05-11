@@ -20,6 +20,7 @@ urlpatterns = [
         name="detail_update_delete_job"),
     url(r'^customer/$', CreateCustomer.as_view(), name="create_customer"),
     url(r'^stripe/$', CreateStripeAccount.as_view(), name="create_stripe"),
+    url(r'^strike/$', CreateStrike.as_view(), name="create_strike"),
     # url(r'^charge/$', CreateCharge.as_view(), name="create_charge"),
     # url(r'^charge/capture/$', CreateCaptureCharge.as_view(),
     #     name='capture_charge'),

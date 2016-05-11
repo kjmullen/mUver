@@ -9,7 +9,7 @@ from muver_api.models import UserProfile, Job
 from muver_api.permissions import IsOwnerOrReadOnly, IsOwnerOrMoverOrReadOnly
 from muver_api.serializers import UserSerializer, UserProfileSerializer, \
     JobSerializer, StripeAccountSerializer, \
-    CustomerSerializer
+    CustomerSerializer, StrikeSerializer
 from rest_framework import generics, status
 from rest_framework import permissions
 from rest_framework.authtoken.models import Token
@@ -122,26 +122,6 @@ class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrMoverOrReadOnly,)
 
 
-    # def get_permissions(self):
-    #     if self.request.job.mover_profile:
-    #         permission_classes = (IsAuthenticatedOrReadOnly,)
-    #     else:
-    #         permission_classes = (IsOwnerOrReadOnly,)
-    #     return super().get_permissions()
-
-#
-# class CreateCharge(APIView):
-#     permission_classes = (IsAuthenticatedOrReadOnly,)
-#
-#     def post(self, request):
-#         serializer = ChargeSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save(user=request.user)
-#             return Response(None, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors,
-#                         status=status.HTTP_400_BAD_REQUEST)
-
-
 class CreateCustomer(APIView):
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -170,6 +150,21 @@ class CreateStripeAccount(APIView):
 
         logger.error("ERROR: Stripe managed account creation failed with:\n"
                      "{}\nUser: {}".format(serializer.errors, request.user))
+
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateStrike(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def post(self, request):
+        serializer = StrikeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(None, status=status.HTTP_201_CREATED)
+        logger.error("ERROR: Strike failed creation. \n{}".format(
+            serializer.errors))
 
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)

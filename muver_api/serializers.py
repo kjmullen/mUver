@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import GEOSGeometry
-from muver_api.models import UserProfile, Job
+from muver_api.models import UserProfile, Job, Strike
 from rest_framework import serializers
 
 
@@ -176,84 +176,29 @@ class CustomerSerializer(serializers.Serializer):
         pass
 
 
-# class ChargeSerializer(serializers.Serializer):
-#
-#     token = serializers.CharField(max_length=60)
-#     amount = serializers.IntegerField()
-#     title = serializers.CharField(max_length=65)
-#     description = serializers.CharField(max_length=300,
-#                                         required=False,
-#                                         default=None)
-#     save_billing = serializers.BooleanField(default=False)
-#     destination_a = serializers.CharField(max_length=80)
-#     destination_b = serializers.CharField(max_length=80)
-#     distance = serializers.CharField(max_length=10)
-#     phone_number = serializers.CharField(max_length=10)
-#
-#     def create(self, validated_data):
-#         stripe.api_key = settings.STRIPE_SECRET_KEY
-#         amount = validated_data['amount']
-#         user = validated_data['user']
-#         title = validated_data['title']
-#         description = validated_data['description']
-#         phone_number = validated_data['phone_number']
-#         destination_a = validated_data['destination_a']
-#         destination_b = validated_data['destination_b']
-#         distance = validated_data['distance']
-#         token = validated_data['token']
-#
-#         try:
-#             # if save:
-#
-#             customer = stripe.Customer.create(
-#                 source=token,
-#                 description="mUver customer"
-#             )
-#             user.profile.customer_id = customer['id']
-#             user.profile.save()
-#
-#             # charge = stripe.Charge.create(
-#             #     amount=amount * 100,
-#             #     currency="usd",
-#             #     customer=customer['id'],
-#             #     capture=False
-#             # )
-#             # price = charge['amount'] / 100
-#             job = Job.objects.create(user=user,
-#                                      price=amount,
-#                                      title=title,
-#                                      description=description,
-#                                      phone_number=phone_number,
-#                                      destination_a=destination_a,
-#                                      destination_b=destination_b,
-#                                      distance=distance
-#                                      )
-#             return job
-#             # else:
-#             #     charge = stripe.Charge.create(
-#             #         amount=amount * 100,
-#             #         currency='usd',
-#             #         source=token,
-#             #         description="Charge for mUver job",
-#             #         capture=False,
-#             #     )
-#             #     price = charge['amount'] / 100
-#             #     job = Job.objects.create(user=user,
-#             #                              price=price,
-#             #                              charge_id=charge['id'],
-#             #                              title=title,
-#             #                              description=description,
-#             #                              phone_number=phone_number,
-#             #                              destination_a=destination_a,
-#             #                              destination_b=destination_b,
-#             #                              distance=distance
-#             #                              )
-#             #     return job
-#         except stripe.error.CardError as e:
-#             pass
-#
-#     def update(self, instance, validated_data):
-#         pass
+class StrikeSerializer(serializers.Serializer):
+
+    user = UserSerializer(read_only=True)
+    profile = serializers.PrimaryKeyRelatedField(read_only=True)
+    comment = serializers.CharField(max_length=150)
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        profile = UserProfile.objects.get(pk=self.initial_data['profile'])
+        comment = validated_data['comment']
+
+        strike = Strike.objects.create(user=user,
+                                       profile=profile,
+                                       comment=comment)
+
+        mover = UserProfile.objects.get(pk=profile.id)
+        mover.banned = True
+        mover.user.force_logout()
+        mover.save()
+        return strike
+
+    def update(self, instance, validated_data):
+        pass
 
 
 class StripeAccountSerializer(serializers.Serializer):
@@ -342,12 +287,3 @@ class StripeAccountSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
-
-# class CaptureChargeSerializer(serializers.Serializer):
-#
-#     charge_id = serializers.CharField(max_length=60)
-#
-#     def create(self, validated_data):
-#         stripe.api_key = settings.STRIPE_SECRET_KEY
-#         charge = stripe.Charge.retrieve(validated_data['charge_id'])
-#         charge.capture()

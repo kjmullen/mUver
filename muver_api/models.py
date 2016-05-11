@@ -14,7 +14,7 @@ class UserProfile(models.Model):
     stripe_account_id = models.CharField(max_length=24, null=True, blank=True)
     customer_id = models.CharField(max_length=24, null=True, blank=True)
     in_progress = models.BooleanField(default=False)
-    # strikes = models.OneToManyField(Strikes)
+    banned = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
