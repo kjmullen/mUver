@@ -138,8 +138,7 @@ class JobSerializer(serializers.ModelSerializer):
             comment = self.initial_data['comment']
             Strike.objects.create(user=user, profile=mover, job=instance,
                                   comment=comment)
-            mover.banned = True
-            mover.save()
+            mover.ban_user()
             # instance.conflict = True
             stripe.Refund.create(charge=instance.charge_id)
             if validated_data.get('repost', instance.repost):
@@ -229,8 +228,7 @@ class StrikeSerializer(serializers.Serializer):
                                        comment=comment)
 
         mover = UserProfile.objects.get(pk=profile.id)
-        mover.banned = True
-        mover.save()
+        mover.ban_user()
         return strike
 
     def update(self, instance, validated_data):

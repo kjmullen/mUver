@@ -12,10 +12,8 @@ class Command(BaseCommand):
             if len(profile.strikes) == 1:
                 for strike in profile.strikes:
                     if strike.created_at > two_days:
-                        profile.banned = False
-                        profile.save()
+                        profile.unban_user()
             elif len(profile.strikes) == 2:
                 for strike in profile.strikes:
                     if strike.created_at > ten_days:
-                        profile.banned = False
-                        profile.save()
+                        profile.unban_user()

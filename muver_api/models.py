@@ -16,6 +16,18 @@ class UserProfile(models.Model):
     in_progress = models.BooleanField(default=False)
     banned = models.BooleanField(default=False)
 
+    def ban_user(self):
+        self.banned = True
+        self.user.is_active = False
+        self.save()
+        self.user.save()
+
+    def unban_user(self):
+        self.banned = False
+        self.user.is_active = True
+        self.save()
+        self.user.save()
+
     def __str__(self):
         return self.user.username
 
