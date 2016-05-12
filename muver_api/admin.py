@@ -10,13 +10,13 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'title', 'pickup_for', 'description', 'price',
-                    'complete', 'destination_a', 'destination_b', 'distance',
-                    'phone_number', 'charge_id', 'mover_profile', 'image_url',
-                    'created_at', 'modified_at', 'confirmation_user',
-                    'confirmation_mover')
+    list_display = ('id', 'user', 'title', 'pickup_for', 'price',
+                    'complete', 'conflict', 'destination_a', 'destination_b',
+                    'distance', 'phone_number', 'charge_id', 'mover_profile',
+                    'image_url', 'created_at', 'modified_at',
+                    'confirmation_user', 'confirmation_mover')
 
 
 @admin.register(Strike)
 class StrikeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'profile', 'comment', 'created_at')
+    list_display = ('id', 'user', 'profile', 'job', 'comment', 'created_at')

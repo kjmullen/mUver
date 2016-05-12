@@ -52,6 +52,9 @@ class JobSerializer(serializers.ModelSerializer):
                                      default=None,
                                      allow_blank=True,
                                      allow_null=True)
+    report_user = serializers.BooleanField(default=False)
+    strike_mover = serializers.BooleanField(default=False)
+    repost = serializers.BooleanField(default=False)
 
     def create(self, validated_data):
 
@@ -95,9 +98,9 @@ class JobSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         stripe.api_key = settings.STRIPE_SECRET_KEY
+        user = instance.user
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
-        # report_user = self.initial_data['report_user']
 
         if validated_data.get('mover_profile', instance.mover_profile)\
                 and not instance.charge_id:
@@ -115,11 +118,40 @@ class JobSerializer(serializers.ModelSerializer):
             mover.in_progress = True
             mover.save()
             instance.save()
+            return instance
 
         mover = UserProfile.objects.get(pk=instance.mover_profile.id)
 
-        # if report_user:
-        #
+        if validated_data.get('report_user', instance.report_user):
+            charge = stripe.Charge.retrieve(instance.charge_id)
+            gas_money = int(charge.amount * 0.15)
+            charge.capture(amount=gas_money)
+            instance.conflict = True
+            user.profile.in_progress = False
+            user.profile.save()
+            mover.in_progress = False
+            mover.save()
+            instance.save()
+
+        elif validated_data.get('strike_mover', instance.strike_mover):
+            # instance.mover_profile = None
+            comment = self.initial_data['comment']
+            Strike.objects.create(user=user, profile=mover, job=instance,
+                                  comment=comment)
+            mover.banned = True
+            mover.save()
+            # instance.conflict = True
+            stripe.Refund.create(charge=instance.charge_id)
+            if validated_data.get('repost', instance.repost):
+                instance.charge_id = None
+                instance.mover_profile = None
+            else:
+                instance.conflict = True
+            user.profile.in_progress = False
+            user.profile.save()
+            mover.in_progress = False
+            mover.save()
+            instance.save()
 
         instance.confirmation_mover = validated_data.get(
             'confirmation_mover', instance.confirmation_mover)
@@ -131,12 +163,12 @@ class JobSerializer(serializers.ModelSerializer):
             instance.user.profile.in_progress = False
             instance.user.profile.save()
 
-        if validated_data.get('confirmation_mover', instance.confirmation_mover) \
+        elif validated_data.get('confirmation_mover', instance.confirmation_mover) \
                 and mover.in_progress:
             mover.in_progress = False
             mover.save()
 
-        if validated_data.get('confirmation_user', instance.confirmation_user)\
+        elif validated_data.get('confirmation_user', instance.confirmation_user)\
                 and validated_data.get('confirmation_mover',
                                        instance.confirmation_mover):
 
@@ -193,6 +225,7 @@ class StrikeSerializer(serializers.Serializer):
 
         strike = Strike.objects.create(user=user,
                                        profile=profile,
+                                       # job=job,
                                        comment=comment)
 
         mover = UserProfile.objects.get(pk=profile.id)

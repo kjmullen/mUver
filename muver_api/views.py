@@ -87,7 +87,7 @@ class ListCreateJob(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Job.objects.filter(mover_profile=None).filter(complete=False)\
-            .order_by('-created_at')
+            .exclude(conflict=True).order_by('-created_at')
 
 
 class JobsByUser(generics.ListAPIView):
@@ -97,11 +97,13 @@ class JobsByUser(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if not user.profile.mover:
-            return Job.objects.filter(user=user).filter(confirmation_user=False).order_by("-modified_at")
+            return Job.objects.filter(user=user).filter(confirmation_user=False) \
+                .exclude(conflict=True).order_by("-modified_at")
         else:
             profile = user.profile
             return Job.objects.filter(mover_profile=profile.id)\
-                .filter(confirmation_mover=False).order_by("-modified_at")
+                .filter(confirmation_mover=False).exclude(conflict=True)\
+                .order_by("-modified_at")
 
 
 class CompletedJobsByUser(generics.ListAPIView):
@@ -111,9 +113,12 @@ class CompletedJobsByUser(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if not user.profile.mover:
-            return Job.objects.filter(user=user).filter(confirmation_user=True).order_by("-modified_at")
+            return Job.objects.filter(user=user).filter(confirmation_user=True) \
+                .exclude(conflict=True).order_by("-modified_at")
         else:
-            return Job.objects.filter(mover_profile=user.profile.id).filter(confirmation_mover=True).order_by("-modified_at")
+            return Job.objects.filter(mover_profile=user.profile.id) \
+                .exclude(conflict=True).filter(confirmation_mover=True)\
+                .order_by("-modified_at")
 
 
 class RetrieveUpdateDestroyJob(generics.RetrieveUpdateDestroyAPIView):

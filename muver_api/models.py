@@ -30,6 +30,7 @@ class Job(models.Model):
     charge_id = models.CharField(max_length=60, null=True, blank=True)
     mover_profile = models.ForeignKey(UserProfile, null=True, blank=True)
     complete = models.BooleanField(default=False)
+    conflict = models.BooleanField(default=False)
     image_url = models.URLField(null=True, blank=True)
     destination_a = models.CharField(max_length=80)
     destination_b = models.CharField(max_length=80)
@@ -38,6 +39,10 @@ class Job(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     confirmation_user = models.BooleanField(default=False)
     confirmation_mover = models.BooleanField(default=False)
+    report_user = models.BooleanField(default=False)
+    strike_mover = models.BooleanField(default=False)
+    repost = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.title
@@ -55,6 +60,7 @@ class Job(models.Model):
 
 class Strike(models.Model):
     user = models.ForeignKey(User, related_name="strikes")
+    job = models.ForeignKey(Job, related_name="strikes")
     profile = models.ForeignKey(UserProfile, related_name="strikes")
     comment = models.CharField(max_length=150)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
