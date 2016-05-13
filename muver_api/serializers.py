@@ -54,6 +54,8 @@ class JobSerializer(serializers.ModelSerializer):
     report_user = serializers.BooleanField(default=False)
     strike_mover = serializers.BooleanField(default=False)
     repost = serializers.BooleanField(default=False)
+    # status = serializers.CharField(max_length=30, allow_blank=True,
+    #                                allow_null=True, required=False)
 
     def create(self, validated_data):
 
@@ -91,8 +93,7 @@ class JobSerializer(serializers.ModelSerializer):
                                  destination_b=destination_b,
                                  distance=distance
                                  )
-        user.profile.in_progress = True
-        user.profile.save()
+        job.job_posted()
         return job
 
     def update(self, instance, validated_data):
@@ -114,9 +115,7 @@ class JobSerializer(serializers.ModelSerializer):
             )
 
             instance.charge_id = charge['id']
-            mover.in_progress = True
-            mover.save()
-            instance.save()
+            instance.in_progress()
             return instance
 
         mover = UserProfile.objects.get(pk=instance.mover_profile.id)
@@ -125,12 +124,7 @@ class JobSerializer(serializers.ModelSerializer):
             charge = stripe.Charge.retrieve(instance.charge_id)
             gas_money = int(charge.amount * 0.15)
             charge.capture(amount=gas_money)
-            instance.conflict = True
-            user.profile.in_progress = False
-            user.profile.save()
-            mover.in_progress = False
-            mover.save()
-            instance.save()
+            instance.job_conflict()
 
         elif validated_data.get('strike_mover', instance.strike_mover):
             comment = self.initial_data['comment']
@@ -141,13 +135,9 @@ class JobSerializer(serializers.ModelSerializer):
             if validated_data.get('repost', instance.repost):
                 instance.charge_id = None
                 instance.mover_profile = None
+                instance.job_posted()
             else:
-                instance.conflict = True
-            user.profile.in_progress = False
-            user.profile.save()
-            mover.in_progress = False
-            mover.save()
-            instance.save()
+                instance.job_conflict()
 
         instance.confirmation_mover = validated_data.get(
             'confirmation_mover', instance.confirmation_mover)
@@ -156,13 +146,11 @@ class JobSerializer(serializers.ModelSerializer):
 
         if validated_data.get('confirmation_user', instance.confirmation_user)\
                 and instance.user.profile.in_progress:
-            instance.user.profile.in_progress = False
-            instance.user.profile.save()
+            instance.user_finished()
 
         elif validated_data.get('confirmation_mover', instance.confirmation_mover) \
                 and mover.in_progress:
-            mover.in_progress = False
-            mover.save()
+            instance.mover_finished()
 
         elif validated_data.get('confirmation_user', instance.confirmation_user)\
                 and validated_data.get('confirmation_mover',
@@ -171,9 +159,7 @@ class JobSerializer(serializers.ModelSerializer):
             charge = stripe.Charge.retrieve(instance.charge_id)
             fee = int(charge.amount * 0.20)
             charge.capture(application_fee=fee)
-            instance.complete = True
-
-            instance.save()
+            instance.job_complete()
             return instance
 
         return super().update(instance, validated_data)

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 from rest_framework.authtoken.models import Token
 
 
@@ -18,6 +19,7 @@ class UserProfile(models.Model):
 
     def ban_user(self):
         self.banned = True
+        self.in_progress = False
         self.user.is_active = False
         self.save()
         self.user.save()
@@ -54,7 +56,45 @@ class Job(models.Model):
     report_user = models.BooleanField(default=False)
     strike_mover = models.BooleanField(default=False)
     repost = models.BooleanField(default=False)
+    status = models.CharField(max_length=60, null=True, blank=True)
 
+    def job_posted(self):
+        self.status = "Job needs a mover."
+        self.user.profile.in_progress = True
+        self.user.profile.save()
+        self.save()
+
+    def in_progress(self):
+        self.status = "Mover accepted job."
+        self.mover_profile.in_progress = True
+        self.mover_profile.save()
+        self.save()
+
+    def job_conflict(self):
+        self.status = "A conflict occurred with user/mover."
+        self.conflict = True
+        self.user.profile.in_progress = False
+        self.user.profile.save()
+        self.mover_profile.in_progress = False
+        self.mover_profile.save()
+        self.save()
+
+    def mover_finished(self):
+        self.status = "Mover set the job to complete. " \
+                      "Waiting for user confirmation."
+        self.confirmation_mover = True
+        self.save()
+
+    def user_finished(self):
+        self.status = "User set the job to complete. " \
+                      "Waiting for mover confirmation."
+        self.confirmation_user = True
+        self.save()
+
+    def job_complete(self):
+        self.status = "Job complete."
+        self.complete = True
+        self.save()
 
     def __str__(self):
         return self.title
