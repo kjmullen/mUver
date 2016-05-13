@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import stripe
 from django.conf import settings
@@ -8,6 +9,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
+from twilio import TwilioRestException
+from twilio.rest import TwilioRestClient
 
 
 class UserProfile(models.Model):
@@ -76,6 +79,20 @@ class Job(models.Model):
         self.mover_profile.in_progress = True
         time = timezone.now()
         self.time_accepted = time
+        account_sid = os.environ['TWILIO_ACCOUNT_SID']
+        auth_token = os.environ['TWILIO_AUTH_TOKEN']
+
+        client = TwilioRestClient(account_sid, auth_token)
+
+        try:
+            message = client.messages.create(body="A mover accepted your job. "
+                                                  "{}: {}"
+                                             .format(self.mover_profile.display_name,
+                                                     self.mover_profile.phone_number),
+                                             to="+18056376389",
+                                             from_="+17024661420")
+        except TwilioRestException as e:
+            print(e)
         self.mover_profile.save()
         self.save()
 

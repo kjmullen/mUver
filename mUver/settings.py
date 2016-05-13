@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'muver_api',
+    'twilio'
 
 ]
 
@@ -234,3 +235,7 @@ REST_FRAMEWORK = {
 
 
 STRIPE_SECRET_KEY = os.environ['STRIPE_SECRET_KEY']
+
+TWILIO_ACCOUNT_SID = os.environ['TWILIO_ACCOUNT_SID']
+TWILIO_AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
+TWILIO_DEFAULT_CALLERID = 'mUver'
