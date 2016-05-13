@@ -1,3 +1,5 @@
+import datetime
+
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -63,7 +65,6 @@ class Job(models.Model):
     status = models.CharField(max_length=80, null=True, blank=True)
     time_accepted = models.DateTimeField(null=True, blank=True)
 
-
     def job_posted(self):
         self.status = "Job needs a mover."
         self.user.profile.in_progress = True
@@ -77,6 +78,22 @@ class Job(models.Model):
         self.time_accepted = time
         self.mover_profile.save()
         self.save()
+
+    def time_check(self):
+
+        hour_old = self.time_accepted + datetime.timedelta(hours=1)
+        if timezone.now() > hour_old:
+            return True
+        else:
+            return False
+
+    def minutes_left(self):
+
+        hour_old = self.time_accepted + datetime.timedelta(hours=1)
+        time_left = hour_old - timezone.now()
+        seconds = time_left.total_seconds()
+        minutes = (seconds % 3600) // 60
+        return minutes
 
     def job_conflict(self):
         self.status = "A conflict occurred with user/mover."
