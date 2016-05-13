@@ -35,6 +35,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(read_only=True)
+    mover_profile = UserProfileSerializer(read_only=True)
     price = serializers.IntegerField()
     title = serializers.CharField(max_length=65)
     pickup_for = serializers.CharField(max_length=30)

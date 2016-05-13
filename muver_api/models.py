@@ -16,6 +16,10 @@ class UserProfile(models.Model):
     customer_id = models.CharField(max_length=24, null=True, blank=True)
     in_progress = models.BooleanField(default=False)
     banned = models.BooleanField(default=False)
+    display_name = models.CharField(max_length=50, default=None, null=True,
+                                    blank=True)
+    phone_number = models.CharField(max_length=10, default=None, null=True,
+                                    blank=True)
 
     def ban_user(self):
         self.banned = True

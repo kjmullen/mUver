@@ -4,8 +4,9 @@ from muver_api.models import UserProfile, Job, Strike
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'in_progress', 'mover', 'banned',
-                    'customer_id', 'stripe_account_id')
+    list_display = ('id', 'user', 'display_name', 'phone_number',
+                    'in_progress', 'mover', 'banned', 'customer_id',
+                    'stripe_account_id')
 
 
 @admin.register(Job)
