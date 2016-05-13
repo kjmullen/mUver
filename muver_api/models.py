@@ -80,14 +80,21 @@ class Job(models.Model):
         self.save()
 
     def mover_finished(self):
-        self.status = "Mover set the job to complete. " \
-                      "Waiting for user confirmation."
+        if not self.confirmation_user:
+            self.status = "Mover set the job to complete. " \
+                          "Waiting for user confirmation."
+        else:
+            self.status = "Job complete."
         self.confirmation_mover = True
         self.save()
 
     def user_finished(self):
-        self.status = "User set the job to complete. " \
-                      "Waiting for mover confirmation."
+        if not self.confirmation_mover:
+            self.status = "User set the job to complete. " \
+                          "Waiting for mover confirmation."
+        else:
+            self.status = "Job complete."
+            self.complete = True
         self.confirmation_user = True
         self.save()
 
