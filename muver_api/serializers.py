@@ -151,16 +151,10 @@ class JobSerializer(serializers.ModelSerializer):
         elif validated_data.get('confirmation_mover', instance.confirmation_mover) \
                 and mover.in_progress:
             instance.mover_finished()
-
-        elif validated_data.get('confirmation_user', instance.confirmation_user)\
-                and validated_data.get('confirmation_mover',
-                                       instance.confirmation_mover):
-
-            charge = stripe.Charge.retrieve(instance.charge_id)
-            fee = int(charge.amount * 0.20)
-            charge.capture(application_fee=fee)
-            instance.job_complete()
-            return instance
+        #
+        # elif validated_data.get('confirmation_user', instance.confirmation_user)\
+        #         and validated_data.get('confirmation_mover',
+        #                                instance.confirmation_mover):
 
         return super().update(instance, validated_data)
 

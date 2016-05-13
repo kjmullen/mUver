@@ -85,6 +85,9 @@ class Job(models.Model):
                           "Waiting for user confirmation."
         else:
             self.status = "Job complete."
+            charge = stripe.Charge.retrieve(self.charge_id)
+            fee = int(charge.amount * 0.20)
+            charge.capture(application_fee=fee)
         self.confirmation_mover = True
         self.save()
 
@@ -95,6 +98,9 @@ class Job(models.Model):
         else:
             self.status = "Job complete."
             self.complete = True
+            charge = stripe.Charge.retrieve(self.charge_id)
+            fee = int(charge.amount * 0.20)
+            charge.capture(application_fee=fee)
         self.confirmation_user = True
         self.save()
 
