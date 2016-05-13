@@ -1,5 +1,4 @@
 import time
-
 import geocoder
 import stripe
 from django.conf import settings
@@ -134,12 +133,10 @@ class JobSerializer(serializers.ModelSerializer):
             instance.save()
 
         elif validated_data.get('strike_mover', instance.strike_mover):
-            # instance.mover_profile = None
             comment = self.initial_data['comment']
             Strike.objects.create(user=user, profile=mover, job=instance,
                                   comment=comment)
             mover.ban_user()
-            # instance.conflict = True
             stripe.Refund.create(charge=instance.charge_id)
             if validated_data.get('repost', instance.repost):
                 instance.charge_id = None
