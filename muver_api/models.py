@@ -56,7 +56,7 @@ class Job(models.Model):
     report_user = models.BooleanField(default=False)
     strike_mover = models.BooleanField(default=False)
     repost = models.BooleanField(default=False)
-    status = models.CharField(max_length=60, null=True, blank=True)
+    status = models.CharField(max_length=80, null=True, blank=True)
 
     def job_posted(self):
         self.status = "Job needs a mover."
