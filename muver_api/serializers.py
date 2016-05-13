@@ -103,10 +103,10 @@ class JobSerializer(serializers.ModelSerializer):
         instance.mover_profile = validated_data.get(
             'mover_profile', instance.mover_profile)
 
-        if validated_data.get('mover_profile', instance.mover_profile)\
-                and not instance.charge_id:
+        if not instance.mover_profile and not instance.charge_id:
             customer = instance.user.profile.customer_id
-            mover = UserProfile.objects.get(pk=instance.mover_profile.id)
+            mover_id = self.initial_data['mover_profile']
+            mover = UserProfile.objects.get(pk=mover_id)
             charge = stripe.Charge.create(
                 amount=instance.price * 100,
                 currency="usd",
@@ -114,7 +114,7 @@ class JobSerializer(serializers.ModelSerializer):
                 destination=mover.stripe_account_id,
                 capture=False,
             )
-
+            instance.mover_profile = mover
             instance.charge_id = charge['id']
             instance.in_progress()
             return instance
@@ -136,6 +136,7 @@ class JobSerializer(serializers.ModelSerializer):
             if validated_data.get('repost', instance.repost):
                 instance.charge_id = None
                 instance.mover_profile = None
+                instance.time_accepted = None
                 instance.job_posted()
             else:
                 instance.job_conflict()

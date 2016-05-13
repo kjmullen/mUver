@@ -61,6 +61,8 @@ class Job(models.Model):
     strike_mover = models.BooleanField(default=False)
     repost = models.BooleanField(default=False)
     status = models.CharField(max_length=80, null=True, blank=True)
+    time_accepted = models.DateTimeField(null=True, blank=True)
+
 
     def job_posted(self):
         self.status = "Job needs a mover."
@@ -71,6 +73,8 @@ class Job(models.Model):
     def in_progress(self):
         self.status = "Mover accepted job."
         self.mover_profile.in_progress = True
+        time = timezone.now()
+        self.time_accepted = time
         self.mover_profile.save()
         self.save()
 
