@@ -86,8 +86,24 @@ class ListCreateJob(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        return Job.objects.filter(mover_profile=None).filter(complete=False)\
-            .exclude(conflict=True).order_by('-created_at')
+        if self.request.GET.get('sort', '') == "price-low":
+            return Job.objects.filter(mover_profile=None).filter(complete=False)\
+                .exclude(conflict=True).order_by('price')
+        elif self.request.GET.get('sort', '') == "price-high":
+            return Job.objects.filter(mover_profile=None).filter(
+                complete=False) \
+                .exclude(conflict=True).order_by('-price')
+        elif self.request.GET.get('sort', '') == "dist-low":
+            return Job.objects.filter(mover_profile=None).filter(
+                complete=False) \
+                .exclude(conflict=True).order_by('distance')
+        elif self.request.GET.get('sort', '') == "dist-high":
+            return Job.objects.filter(mover_profile=None).filter(
+                complete=False) \
+                .exclude(conflict=True).order_by('-distance')
+        else:
+            return Job.objects.filter(mover_profile=None).filter(complete=False)\
+                .exclude(conflict=True).order_by('-created_at')
 
 
 class JobsByUser(generics.ListAPIView):
