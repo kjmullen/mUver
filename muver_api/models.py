@@ -89,7 +89,7 @@ class Job(models.Model):
                                                   "{}: {}"
                                              .format(self.mover_profile.display_name,
                                                      self.mover_profile.phone_number),
-                                             to="+18056376389",
+                                             to="+18056376389", # self.phone_number
                                              from_="+17024661420")
         except TwilioRestException as e:
             print(e)
