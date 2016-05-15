@@ -2,9 +2,9 @@ import datetime
 import os
 
 import stripe
+from django.contrib.gis.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -57,7 +57,9 @@ class Job(models.Model):
     image_url = models.URLField(null=True, blank=True)
     destination_a = models.CharField(max_length=80)
     destination_b = models.CharField(max_length=80)
-    distance = models.CharField(max_length=10, null=True, blank=True)
+    point_a = models.PointField(null=True, blank=True)
+    point_b = models.PointField(null=True, blank=True)
+    trip_distance = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     modified_at = models.DateTimeField(auto_now=True)
     confirmation_user = models.BooleanField(default=False)

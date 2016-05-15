@@ -36,6 +36,9 @@ class JobSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(read_only=True)
     mover_profile = UserProfileSerializer(read_only=True)
+    distance = serializers.DecimalField(
+        source='distance.mi', max_digits=10, decimal_places=2,
+        required=False, read_only=True)
     price = serializers.IntegerField()
     title = serializers.CharField(max_length=65)
     pickup_for = serializers.CharField(max_length=30)
@@ -45,7 +48,11 @@ class JobSerializer(serializers.ModelSerializer):
     # save_billing = serializers.BooleanField(default=False)
     destination_a = serializers.CharField(max_length=80)
     destination_b = serializers.CharField(max_length=80)
-    distance = serializers.CharField(max_length=20, required=False,
+    point_a = serializers.CharField(max_length=60, required=False,
+                                    read_only=True)
+    point_b = serializers.CharField(max_length=60, required=False,
+                                    read_only=True)
+    trip_distance = serializers.CharField(max_length=20, required=False,
                                      read_only=True)
     phone_number = serializers.CharField(max_length=10)
     image_url = serializers.URLField(required=False,
@@ -81,7 +88,7 @@ class JobSerializer(serializers.ModelSerializer):
         point_b = GEOSGeometry('POINT(' + str(b_lng) + ' ' + str(b_lat) + ')',
                                srid=4326)
 
-        distance = int(point_a.distance(point_b) * 100 * 0.62137)
+        trip_distance = int(point_a.distance(point_b) * 100 * 0.62137)
 
         job = Job.objects.create(user=user,
                                  price=price,
@@ -92,7 +99,9 @@ class JobSerializer(serializers.ModelSerializer):
                                  phone_number=phone_number,
                                  destination_a=destination_a,
                                  destination_b=destination_b,
-                                 distance=distance
+                                 point_a=point_a,
+                                 point_b=point_b,
+                                 trip_distance=trip_distance
                                  )
         job.job_posted()
         return job

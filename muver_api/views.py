@@ -2,6 +2,8 @@ import logging
 
 from django.conf.global_settings import LOGGING
 from django.contrib.auth.models import User
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import GEOSGeometry
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -19,11 +21,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
-logger.info("muver_api.views logger")  # should work
+logger.info("muver_api.views logger")
 
 
 # def url_please(request):
-#     logger.info("path: %s" % request.path)  # should work
+#     logger.info("path: %s" % request.path)
 #     return HttpResponse(request.path)
 
 
@@ -86,7 +88,20 @@ class ListCreateJob(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        if self.request.GET.get('sort', '') == "price-low":
+
+        latitude = self.request.query_params.get('lat', None)
+        longitude = self.request.query_params.get('lng', None)
+        if latitude and longitude:
+            qs = super().get_queryset()
+            pnt = GEOSGeometry(
+                'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
+                srid=4326)
+            qs = qs.annotate(
+                distance=Distance('point_a', pnt)).order_by(
+                'distance')
+            return qs
+
+        elif self.request.GET.get('sort', '') == "price-low":
             return Job.objects.filter(mover_profile=None).filter(complete=False)\
                 .exclude(conflict=True).order_by('price')
         elif self.request.GET.get('sort', '') == "price-high":
