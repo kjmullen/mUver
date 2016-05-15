@@ -13,9 +13,10 @@ class UserProfileAdmin(admin.ModelAdmin):
 class JobAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'title', 'pickup_for', 'price',
                     'complete', 'conflict', 'destination_a', 'destination_b',
-                    'trip_distance', 'phone_number', 'charge_id', 'mover_profile',
-                    'time_accepted', 'image_url', 'created_at', 'modified_at',
-                    'status', 'confirmation_user', 'confirmation_mover')
+                    'trip_distance', 'phone_number', 'charge_id',
+                    'mover_profile', 'time_accepted', 'image_url',
+                    'created_at', 'modified_at', 'status',
+                    'confirmation_user', 'confirmation_mover')
 
 
 @admin.register(Strike)
