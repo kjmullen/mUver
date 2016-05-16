@@ -17,7 +17,7 @@ before_script:
 - psql -c "CREATE DATABASE muver_db;" -U postgres
 - python manage.py migrate
 script:
-- coverage run --source='.' manage.py tests muver_api
+- coverage run --source='.' manage.py test muver_api
 after_success:
 - coveralls
 deploy:
