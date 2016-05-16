@@ -99,7 +99,7 @@ class ListCreateJob(generics.ListCreateAPIView):
                 'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
                 srid=4326)
             new_query = qs.annotate(
-                distance=Distance('point_a', pnt)).filter(mover_profile=None)\
+                distance=Distance('point_a', pnt)).filter(status="Job needs a mover.")\
                 .filter(complete=False).exclude(conflict=True)
             if sort == "price-low":
                 return new_query.order_by('distance', 'price')

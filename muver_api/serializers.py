@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import GEOSGeometry
 from muver_api.models import UserProfile, Job, Strike
+from requests import Response
 from rest_framework import serializers
 
 
@@ -129,7 +130,7 @@ class JobSerializer(serializers.ModelSerializer):
             return instance
 
         mover = UserProfile.objects.get(pk=instance.mover_profile.id)
-
+        # if instance.mover_profile and instance.time_check():
         if validated_data.get('report_user', instance.report_user):
             charge = stripe.Charge.retrieve(instance.charge_id)
             gas_money = int(charge.amount * 0.15)
@@ -155,19 +156,19 @@ class JobSerializer(serializers.ModelSerializer):
         instance.confirmation_user = validated_data.get(
             'confirmation_user', instance.confirmation_user)
 
-        if validated_data.get('confirmation_user', instance.confirmation_user)\
+        if validated_data.get('confirmation_user',
+                              instance.confirmation_user)\
                 and instance.user.profile.in_progress:
             instance.user_finished()
 
-        elif validated_data.get('confirmation_mover', instance.confirmation_mover) \
+        elif validated_data.get('confirmation_mover',
+                                instance.confirmation_mover)\
                 and mover.in_progress:
             instance.mover_finished()
-        #
-        # elif validated_data.get('confirmation_user', instance.confirmation_user)\
-        #         and validated_data.get('confirmation_mover',
-        #                                instance.confirmation_mover):
 
         return super().update(instance, validated_data)
+        # else:
+        #     Response({'minutes_left': instance.minutes_left()})
 
     class Meta:
         model = Job
