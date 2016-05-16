@@ -139,6 +139,8 @@ class Job(models.Model):
             charge = stripe.Charge.retrieve(self.charge_id)
             fee = int(charge.amount * 0.20)
             charge.capture(application_fee=fee)
+            self.complete = True
+            self.save()
         self.confirmation_mover = True
         self.mover_profile.in_progress = False
         self.mover_profile.save()
@@ -154,6 +156,8 @@ class Job(models.Model):
             charge = stripe.Charge.retrieve(self.charge_id)
             fee = int(charge.amount * 0.20)
             charge.capture(application_fee=fee)
+            self.complete = True
+            self.save()
         self.confirmation_user = True
         self.user.profile.in_progress = False
         self.user.profile.save()
