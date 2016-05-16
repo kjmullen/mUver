@@ -91,15 +91,28 @@ class ListCreateJob(generics.ListCreateAPIView):
 
         latitude = self.request.query_params.get('lat', None)
         longitude = self.request.query_params.get('lng', None)
+        sort = self.request.query_params.get('sort', None)
+
         if latitude and longitude:
             qs = super().get_queryset()
             pnt = GEOSGeometry(
                 'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
                 srid=4326)
-            qs = qs.annotate(
+            new_query = qs.annotate(
                 distance=Distance('point_a', pnt)).order_by(
-                'distance')
-            return qs
+                'distance').filter(mover_profile=None).filter(complete=False)\
+                .exclude(conflict=True)
+            if sort == "price-low":
+                return new_query.order_by('price')
+            elif sort == "price-high":
+                return new_query.order_by('-price')
+            elif sort == "dist-low":
+                return new_query.order_by('distance')
+            elif sort == "dist-high":
+                return new_query.order_by('-distance')
+            else:
+                new_query.order_by('distance')
+                return qs
 
         elif self.request.GET.get('sort', '') == "price-low":
             return Job.objects.filter(mover_profile=None).filter(complete=False)\
