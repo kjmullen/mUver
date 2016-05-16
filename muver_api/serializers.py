@@ -27,10 +27,17 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(read_only=True)
+    _demo_user_reset = serializers.BooleanField(default=False)
 
     class Meta:
         model = UserProfile
         fields = "__all__"
+
+    def update(self, instance, validated_data):
+        if validated_data.get('_demo_user_reset', instance._demo_user_reset):
+            instance.demo_reset()
+
+        return super().update(instance, validated_data)
 
 
 class JobSerializer(serializers.ModelSerializer):
