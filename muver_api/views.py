@@ -99,18 +99,27 @@ class ListCreateJob(generics.ListCreateAPIView):
                 'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
                 srid=4326)
             new_query = qs.annotate(
-                distance=Distance('point_a', pnt)).filter(status="Job needs a mover.")\
-                .filter(complete=False).exclude(conflict=True)
+                distance=Distance('point_a', pnt))
             if sort == "price-low":
-                return new_query.order_by('distance', 'price')
+                return new_query.filter(mover_profile=None) \
+                    .filter(complete=False).exclude(conflict=True)\
+                    .order_by('distance', 'price')
             elif sort == "price-high":
-                return new_query.order_by('distance', '-price')
+                return new_query.filter(mover_profile=None) \
+                    .filter(complete=False).exclude(conflict=True)\
+                    .order_by('distance', '-price')
             elif sort == "dist-low":
-                return new_query.order_by('distance', 'trip_distance')
+                return new_query.filter(mover_profile=None) \
+                    .filter(complete=False).exclude(conflict=True)\
+                    .order_by('distance', 'trip_distance')
             elif sort == "dist-high":
-                return new_query.order_by('distance', '-trip_distance')
+                return new_query.filter(mover_profile=None) \
+                    .filter(complete=False).exclude(conflict=True)\
+                    .order_by('distance', '-trip_distance')
             else:
-                new_query.order_by('distance')
+                new_query.filter(mover_profile=None) \
+                    .filter(complete=False).exclude(conflict=True)\
+                    .order_by('distance')
                 return qs
 
         else:
