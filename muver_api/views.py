@@ -98,9 +98,9 @@ class ListCreateJob(generics.ListCreateAPIView):
             pnt = GEOSGeometry(
                 'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
                 srid=4326)
-            new_query = qs.annotate(
-                distance=Distance('point_a', pnt)).filter(mover_profile=None) \
-                .filter(complete=False).exclude(conflict=True)
+            new_query = qs.filter(mover_profile=None).annotate(
+                distance=Distance('point_a', pnt)).filter(complete=False)\
+                .exclude(conflict=True)
             if sort == "price-low":
                 return new_query.order_by('distance', 'price')
             elif sort == "price-high":
