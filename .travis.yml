@@ -1,0 +1,29 @@
+language: python
+python:
+- 3.5.1
+serives:
+- postgresql
+env:
+- DJANGO=1.9.5
+before_install:
+- export DJANGO_SETTINGS_MODULE=mUver.travis-settings
+- export PYTHONPATH=$HOME/builds/kjm/mUver
+- export PIP_USER_MIRRORS=true
+install:
+- pip install -r requirements.txt
+- pip install django==$DJANGO --quiet
+- pip install psycopg2 --quiet
+before_script:
+- psql -c "CREATE DATABASE muver_db;" -U postgres
+- python manage.py migrate
+script:
+- coverage run --source='.' manage.py tests muver_api
+after_success:
+- coveralls
+deploy:
+  provider: heroku
+  api_key:
+    secure: fg96xiWEzRDOcdVWlRxT+ZnM0ova4l6zLKWbrC5L5hsF/ZyWw0NsBLJTHzAklUk3YYayIF3dyRguAqWdpZtvSPfi/GKhKjJpRO3DkUkqE9Nv9bYGilBjes53E7V0jbUVM0+tnQvvC53bpWtX0gJNzBolnKJ+sPamrg/c6yTL0pylk6fo/G5MzTl7JmVe4fg4SP+2O0lN1Yu2HtgAPfLIcxovcs+yikD1StXzDqMmCYWxih4z9j3LbQQvLsXWExsljoTlKGOFl5IhxTBVLFAC9uBLhbqf/H0e14axpHVxzspm+ipEYe6Kr+Ls9MUMtxlextb2qj31EtfJSgDQM5YJacexvR1bPKp/ljNzfrudtW9x3QXPLJ5m18a7AJSWM3MKLzIVohy4QEcHzufvvsC8zzFTvBFGBcdjHlbcaTEL9skLHcSHgSC6SoZFoski+lFPxxWVljsOu7hXhOi3YYONfzntxGIDfq2Kvhh49M6t1lh9gprgTWxg5y+XbaHbAGgTrOza69LVEi1ClDkPvar+qArHTEV8VfWyVSKKrQcsqkejvxTOZd1RMc6bLqg9QZoubQ2esvoMcBUid2lXtViuteAqb162++14QKA9pjl6JZzHApg/xaEYXJa5Gj+EvJYT3qsfjvvZ+0WPaaB2ticz2s8mCOOkus0pa4CdUZm4BwY=
+  app: radiant-eyrie-75982
+  on: 
+  run: python manage.py migrate
