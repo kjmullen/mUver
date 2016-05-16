@@ -99,39 +99,35 @@ class ListCreateJob(generics.ListCreateAPIView):
                 'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
                 srid=4326)
             new_query = qs.annotate(
-                distance=Distance('point_a', pnt)).order_by(
-                'distance').filter(mover_profile=None).filter(complete=False)\
-                .exclude(conflict=True)
+                distance=Distance('point_a', pnt)).filter(mover_profile=None)\
+                .filter(complete=False).exclude(conflict=True)
             if sort == "price-low":
-                return new_query.order_by('price')
+                return new_query.order_by('distance', 'price')
             elif sort == "price-high":
-                return new_query.order_by('-price')
+                return new_query.order_by('distance', '-price')
             elif sort == "dist-low":
-                return new_query.order_by('distance')
+                return new_query.order_by('distance', 'trip_distance')
             elif sort == "dist-high":
-                return new_query.order_by('-distance')
+                return new_query.order_by('distance', '-trip_distance')
             else:
                 new_query.order_by('distance')
                 return qs
 
-        elif self.request.GET.get('sort', '') == "price-low":
-            return Job.objects.filter(mover_profile=None).filter(complete=False)\
-                .exclude(conflict=True).order_by('price')
-        elif self.request.GET.get('sort', '') == "price-high":
-            return Job.objects.filter(mover_profile=None).filter(
-                complete=False) \
-                .exclude(conflict=True).order_by('-price')
-        elif self.request.GET.get('sort', '') == "dist-low":
-            return Job.objects.filter(mover_profile=None).filter(
-                complete=False) \
-                .exclude(conflict=True).order_by('distance')
-        elif self.request.GET.get('sort', '') == "dist-high":
-            return Job.objects.filter(mover_profile=None).filter(
-                complete=False) \
-                .exclude(conflict=True).order_by('-distance')
         else:
-            return Job.objects.filter(mover_profile=None).filter(complete=False)\
-                .exclude(conflict=True).order_by('-created_at')
+            without_location = Job.objects.filter(mover_profile=None).filter(
+                complete=False).exclude(conflict=True)
+            sort = self.request.GET.get('sort', '')
+
+            if sort == "price-low":
+                return without_location.order_by('price')
+            elif sort == "price-high":
+                return without_location.order_by('-price')
+            elif sort == "dist-low":
+                return without_location.order_by('trip_distance')
+            elif sort == "dist-high":
+                return without_location.order_by('-trip_distance')
+            else:
+                return without_location.order_by('-created_at')
 
 
 class JobsByUser(generics.ListAPIView):
