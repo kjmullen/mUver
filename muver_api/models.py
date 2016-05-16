@@ -31,6 +31,7 @@ class UserProfile(models.Model):
         self.in_progress = False
         for job in self.user.jobs.all():
             job.delete()
+        self._demo_user_reset = False
         self.save()
 
     def ban_user(self):
