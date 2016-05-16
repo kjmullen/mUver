@@ -160,11 +160,15 @@ class JobSerializer(serializers.ModelSerializer):
                               instance.confirmation_user)\
                 and instance.user.profile.in_progress:
             instance.user_finished()
+            instance.user.profile.in_progress = False
+            instance.user.profile.save()
 
         elif validated_data.get('confirmation_mover',
                                 instance.confirmation_mover)\
                 and mover.in_progress:
             instance.mover_finished()
+            instance.mover_profile.in_progress = False
+            instance.mover_profile.save()
 
         return super().update(instance, validated_data)
         # else:
