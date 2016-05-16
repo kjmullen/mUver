@@ -1,12 +1,11 @@
 import logging
-
-from django.conf.global_settings import LOGGING
+# from django.conf.global_settings import LOGGING
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import GEOSGeometry
-from django.core import serializers
-from django.http import HttpResponse
-from django.shortcuts import render
+# from django.core import serializers
+# from django.http import HttpResponse
+# from django.shortcuts import render
 from muver_api.models import UserProfile, Job
 from muver_api.permissions import IsOwnerOrReadOnly, IsOwnerOrMoverOrReadOnly
 from muver_api.serializers import UserSerializer, UserProfileSerializer, \
@@ -14,8 +13,8 @@ from muver_api.serializers import UserSerializer, UserProfileSerializer, \
     CustomerSerializer, StrikeSerializer
 from rest_framework import generics, status
 from rest_framework import permissions
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
+# from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,11 +22,9 @@ from rest_framework.response import Response
 logger = logging.getLogger(__name__)
 logger.info("muver_api.views logger")
 
-
 # def url_please(request):
 #     logger.info("path: %s" % request.path)
 #     return HttpResponse(request.path)
-
 
 # class ObtainAuthTokenWithUserID(ObtainAuthToken):
 #    def post(self, request):
@@ -111,7 +108,6 @@ class ListCreateJob(generics.ListCreateAPIView):
                 return new_query.order_by('distance', '-trip_distance')
             else:
                 return new_query.order_by('distance')
-
 
         else:
             without_location = Job.objects.filter(mover_profile=None).filter(

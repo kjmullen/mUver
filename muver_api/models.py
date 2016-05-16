@@ -26,6 +26,10 @@ class UserProfile(models.Model):
     phone_number = models.CharField(max_length=10, default=None, null=True,
                                     blank=True)
 
+    def _demo_reset(self):
+        for job in self.user.jobs.all():
+            job.delete()
+
     def ban_user(self):
         self.banned = True
         self.in_progress = False
@@ -69,6 +73,7 @@ class Job(models.Model):
     repost = models.BooleanField(default=False)
     status = models.CharField(max_length=80, null=True, blank=True)
     time_accepted = models.DateTimeField(null=True, blank=True)
+
 
     def job_posted(self):
         self.status = "Job needs a mover."

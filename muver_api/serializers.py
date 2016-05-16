@@ -3,10 +3,10 @@ import geocoder
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.gis.db.models.functions import Distance
+# from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import GEOSGeometry
 from muver_api.models import UserProfile, Job, Strike
-from requests import Response
+# from requests import Response
 from rest_framework import serializers
 
 
@@ -267,8 +267,6 @@ class StripeAccountSerializer(serializers.Serializer):
         postal_code = validated_data['postal_code']
         ssn_last_four = validated_data['ssn_last_four']
 
-
-
         try:
             account = stripe.Account.create(
                 country=country,
@@ -305,7 +303,6 @@ class StripeAccountSerializer(serializers.Serializer):
             user.profile.stripe_account_id = account['id']
             user.profile.mover = True
             user.profile.save()
-
 
             return account
 

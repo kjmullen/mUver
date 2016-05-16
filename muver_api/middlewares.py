@@ -5,5 +5,5 @@ class ActiveUserMiddleware(object):
     def process_request(self, request):
         if not request.user.is_authenticated():
             return
-        if not request.user.is_active:
+        elif not request.user.is_active:
            logout(request)
