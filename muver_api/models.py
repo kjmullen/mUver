@@ -133,6 +133,8 @@ class Job(models.Model):
             fee = int(charge.amount * 0.20)
             charge.capture(application_fee=fee)
         self.confirmation_mover = True
+        self.mover_profile.in_progress = False
+        self.mover_profile.save()
         self.save()
 
     def user_finished(self):
@@ -146,6 +148,8 @@ class Job(models.Model):
             fee = int(charge.amount * 0.20)
             charge.capture(application_fee=fee)
         self.confirmation_user = True
+        self.user.profile.in_progress = False
+        self.user.profile.save()
         self.save()
 
     def job_complete(self):
