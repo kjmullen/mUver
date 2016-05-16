@@ -98,28 +98,19 @@ class ListCreateJob(generics.ListCreateAPIView):
             pnt = GEOSGeometry(
                 'POINT(' + str(longitude) + ' ' + str(latitude) + ')',
                 srid=4326)
-            new_query = qs.annotate(
+            new_query = qs.filter(mover_profile=None) \
+                .filter(complete=False).exclude(conflict=True).annotate(
                 distance=Distance('point_a', pnt))
             if sort == "price-low":
-                return new_query.filter(mover_profile=None) \
-                    .filter(complete=False).exclude(conflict=True)\
-                    .order_by('distance', 'price')
+                return new_query.order_by('distance', 'price')
             elif sort == "price-high":
-                return new_query.filter(mover_profile=None) \
-                    .filter(complete=False).exclude(conflict=True)\
-                    .order_by('distance', '-price')
+                return new_query.order_by('distance', '-price')
             elif sort == "dist-low":
-                return new_query.filter(mover_profile=None) \
-                    .filter(complete=False).exclude(conflict=True)\
-                    .order_by('distance', 'trip_distance')
+                return new_query.order_by('distance', 'trip_distance')
             elif sort == "dist-high":
-                return new_query.filter(mover_profile=None) \
-                    .filter(complete=False).exclude(conflict=True)\
-                    .order_by('distance', '-trip_distance')
+                return new_query.order_by('distance', '-trip_distance')
             else:
-                new_query.filter(mover_profile=None) \
-                    .filter(complete=False).exclude(conflict=True)\
-                    .order_by('distance')
+                new_query.order_by('distance')
                 return qs
 
         else:
