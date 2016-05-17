@@ -69,7 +69,7 @@ class ListUserProfile(generics.ListAPIView):
 class RetrieveUpdateUserProfile(generics.RetrieveUpdateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsOwnerOrReadOnly,)
 
 
 class ListCreateJob(generics.ListCreateAPIView):
