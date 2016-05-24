@@ -1,6 +1,5 @@
 import datetime
 import os
-
 import stripe
 from django.contrib.gis.db import models
 from django.conf import settings
@@ -28,13 +27,22 @@ class UserProfile(models.Model):
     _demo_user_reset = models.BooleanField(default=False)
 
     def demo_reset(self):
+        """
+        used to reset the demo users
+        """
         self.in_progress = False
         for job in self.user.jobs.all():
+            # job.mover_profile.in_progress = False
+            # job.mover_profile.save()
             job.delete()
         self._demo_user_reset = False
         self.save()
 
     def ban_user(self):
+        """
+        sets user to inactive
+        called after mover gets a strike on his profile
+        """
         self.banned = True
         self.in_progress = False
         self.user.is_active = False
@@ -42,6 +50,10 @@ class UserProfile(models.Model):
         self.user.save()
 
     def unban_user(self):
+        """
+        used in the unban_movers command
+        a scheduled command to unban users
+        """
         self.banned = False
         self.user.is_active = True
         self.save()

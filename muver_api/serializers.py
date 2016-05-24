@@ -45,7 +45,7 @@ class JobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     mover_profile = UserProfileSerializer(read_only=True)
     distance = serializers.DecimalField(
-        source='distance.mi', max_digits=10, decimal_places=2,
+        source='distance.mi', max_digits=10, decimal_places=1,
         required=False, read_only=True)
     price = serializers.IntegerField()
     title = serializers.CharField(max_length=65)
@@ -111,6 +111,12 @@ class JobSerializer(serializers.ModelSerializer):
                                  point_b=point_b,
                                  trip_distance=trip_distance
                                  )
+        if not user.profile.phone_number:
+            user.profile.phone_number = phone_number
+            user.profile.save()
+        if not user.profile.display_name:
+            user.profile.display_name = pickup_for
+            user.profile.save()
         job.job_posted()
         return job
 
