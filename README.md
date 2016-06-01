@@ -2,6 +2,7 @@
 ## mUver
 
 Final Project by Kevin Mullen
+
 for the February '16 - May '16 cohort at The Iron Yard
 
 
@@ -12,10 +13,15 @@ Build Status | Coverage
 
 ## Synopsis
 
-mUver is a micro move solution. A system that pairs users with truck owners.
-This project was created as a final project for The Iron Yard. Contained in this project
-is the back end written in python/django.
+mUver is a micro move solution. A system that pairs users with truck owners. Contained in this project is the back end written in python/django.
+
+## Features
+Stripe with Managed Accounts - Payments made directly to users.
+Twilio - Text notifications
+GEODjango - Distance calculations from addresses
 
 ## To Do
 
 Get test coverage above 90%
+
+Add more Twilio Functionality (responding to text to make changes to a current job)
