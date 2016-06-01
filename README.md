@@ -13,11 +13,13 @@ Build Status | Coverage
 
 ## Synopsis
 
-mUver is a micro move solution. A system that pairs users with truck owners. Contained in this project is the back end written in python/django.
+mUver is a micro move solution. A system that pairs users with truck owners. Contained in this project is the back end written in python/django. An API was created with django rest framework to be paired with a React front end created by my partner.
 
 ## Features
 Stripe with Managed Accounts - Payments made directly to users.
+
 Twilio - Text notifications
+
 GEODjango - Distance calculations from addresses
 
 ## To Do
