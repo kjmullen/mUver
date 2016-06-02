@@ -40,9 +40,11 @@ class TestListCreateJob(APITestCase):
                 "phone_number": "8056376389", "destination_a": "las vegas, nv",
                 "destination_b": "henderson, nv"}
         response = self.client.post(url, data, format='json')
+        self.job.job_posted()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Job.objects.count(), 2)
         self.assertEqual(data['title'], 'test title')
+        self.assertTrue(self.user.profile.in_progress, True)
         self.assertEqual(self.user.profile, UserProfile.objects.first())
 
     def test_add_mover(self):
@@ -79,6 +81,11 @@ class TestListCreateJob(APITestCase):
         account.save()
 
         mover_profile.stripe_account_id = account['id']
-        mover_profile.mover = True
         mover_profile.save()
 
+    def test_mover_on_job(self):
+        mover_profile = self.mover_user.profile
+        self.job.mover_profile = mover_profile
+        self.job.in_progress()
+        self.assertEqual(self.job.mover_profile, self.mover_user.profile)
+        self.assertTrue(mover_profile.in_progress, True)
