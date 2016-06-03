@@ -36,14 +36,14 @@ class TestListCreateJob(APITestCase):
         token = Token.objects.get(user_id=self.user.id)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         url = reverse('list_create_job')
-        data = {"title": "test title", "price": 80, "pickup_for": "tester mctesterson",
+        data = {"title": "test title2", "price": 80, "pickup_for": "tester mctesterson",
                 "phone_number": "8056376389", "destination_a": "las vegas, nv",
                 "destination_b": "henderson, nv"}
         response = self.client.post(url, data, format='json')
         self.job.job_posted()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Job.objects.count(), 2)
-        self.assertEqual(data['title'], 'test title')
+        self.assertEqual(data['title'], 'test title2')
         self.assertTrue(self.user.profile.in_progress, True)
         self.assertEqual(self.user.profile, UserProfile.objects.first())
 
@@ -83,9 +83,36 @@ class TestListCreateJob(APITestCase):
         mover_profile.stripe_account_id = account['id']
         mover_profile.save()
 
-    def test_mover_on_job(self):
+    # def test_mover_on_job(self):
         mover_profile = self.mover_user.profile
+        token = stripe.Token.create(
+            card={
+                "number": '4242424242424242',
+                "exp_month": 12,
+                "exp_year": 2017,
+                "cvc": '123'
+            },
+        )
+        customer = stripe.Customer.create(source=token['id'])
+        charge = stripe.Charge.create(
+            amount=self.job.price * 100,
+            currency="usd",
+            customer=customer,
+            destination=mover_profile.stripe_account_id,
+            capture=False,
+        )
+        self.job.charge_id = charge['id']
         self.job.mover_profile = mover_profile
+
+        self.job.save()
         self.job.in_progress()
         self.assertEqual(self.job.mover_profile, self.mover_user.profile)
-        self.assertTrue(mover_profile.in_progress, True)
+
+    # def test_users_complete_job(self):
+        self.job.user_finished()
+        self.assertFalse(self.user.profile.in_progress, False)
+
+        self.job.mover_finished()
+        self.assertFalse(self.mover_user.profile.in_progress, False)
+
+        self.assertTrue(self.job.complete, True)
