@@ -122,4 +122,18 @@ class TestListCreateJob(APITestCase):
         self.assertTrue(self.job.complete, True)
         self.assertEqual(self.job.status, "Job complete.")
 
+    def test_demo_user_reset(self):
 
+        self.user.profile.demo_reset()
+        self.assertFalse(self.user.profile.in_progress, False)
+        self.assertEqual(self.user.jobs.count(), 0)
+
+    def test_ban_unban_user(self):
+        self.user.profile.ban_user()
+        self.assertFalse(self.user.profile.in_progress, False)
+        self.assertFalse(self.user.is_active, False)
+        self.assertTrue(self.user.profile.banned, True)
+
+        self.user.profile.unban_user()
+        self.assertTrue(self.user.is_active, True)
+        self.assertFalse(self.user.profile.banned, False)
