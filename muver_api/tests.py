@@ -46,6 +46,7 @@ class TestListCreateJob(APITestCase):
         self.assertEqual(data['title'], 'test title2')
         self.assertTrue(self.user.profile.in_progress, True)
         self.assertEqual(self.user.profile, UserProfile.objects.first())
+        self.assertEqual(self.job.status, "Job needs a mover.")
 
     def test_add_mover(self):
         mover_profile = self.mover_user.profile
@@ -105,8 +106,10 @@ class TestListCreateJob(APITestCase):
         self.job.mover_profile = mover_profile
 
         self.job.save()
+
         self.job.in_progress()
         self.assertEqual(self.job.mover_profile, self.mover_user.profile)
+        self.assertEqual(self.job.status, "Mover accepted job.")
 
     # def test_users_complete_job(self):
         self.job.user_finished()
@@ -115,4 +118,8 @@ class TestListCreateJob(APITestCase):
         self.job.mover_finished()
         self.assertFalse(self.mover_user.profile.in_progress, False)
 
+        self.job.job_complete()
         self.assertTrue(self.job.complete, True)
+        self.assertEqual(self.job.status, "Job complete.")
+
+
