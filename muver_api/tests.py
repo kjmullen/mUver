@@ -133,6 +133,15 @@ class TestListCreateJob(APITestCase):
         self.assertTrue(self.job.complete, True)
         self.assertEqual(self.job.status, "Job complete.")
 
+    def test_job_conflict(self):
+        self.job.mover_profile = self.mover_user.profile
+        self.job.job_conflict()
+        self.assertEqual(self.job.status, "A conflict occurred with user/mover.")
+        self.assertTrue(self.job.conflict, True)
+        self.assertFalse(self.user.profile.in_progress, False)
+        self.assertFalse(self.mover_user.profile.in_progress, False)
+
+
     def test_demo_user_reset(self):
 
         self.user.profile.demo_reset()
