@@ -27,4 +27,8 @@ GEODjango - Distance calculations from addresses
 
 Get test coverage above 90%
 
+Distance calcuation needs working https
+
 Add more Twilio Functionality (responding to text to make changes to a current job)
+
+Fix known front end bugs
