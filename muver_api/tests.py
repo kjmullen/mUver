@@ -1,5 +1,7 @@
 import time
 
+import datetime
+from django.utils import timezone
 import stripe
 from django.conf import settings
 from django.test import TestCase
@@ -111,6 +113,15 @@ class TestListCreateJob(APITestCase):
         self.assertEqual(self.job.mover_profile, self.mover_user.profile)
         self.assertEqual(self.job.status, "Mover accepted job.")
 
+        self.assertFalse(self.job.time_check(), False)
+
+        self.assertTrue(self.job.minutes_left() < 60, True)
+
+        two_hours_old = timezone.now() - datetime.timedelta(hours=2)
+        self.job.time_accepted = two_hours_old
+        self.job.save()
+        self.assertTrue(self.job.time_check(), True)
+
     # def test_users_complete_job(self):
         self.job.user_finished()
         self.assertFalse(self.user.profile.in_progress, False)
@@ -137,3 +148,4 @@ class TestListCreateJob(APITestCase):
         self.user.profile.unban_user()
         self.assertTrue(self.user.is_active, True)
         self.assertFalse(self.user.profile.banned, False)
+
