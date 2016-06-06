@@ -31,4 +31,4 @@ Get test coverage above 90% + more docstrings
 
 Add more Twilio Functionality (responding to text to make changes to a current job)
 
-Fix known front end bugs + adding registration + password/phone number/address validation messages (if input invalid)
+Fix known front end bugs + adding registration + add cloudinary for image hosting + password/phone number/address validation messages (if input invalid)
