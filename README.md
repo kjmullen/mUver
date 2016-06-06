@@ -25,10 +25,10 @@ GEODjango - Distance calculations from addresses
 
 ## To Do
 
-Get test coverage above 90%
+Get test coverage above 90% + more docstrings
 
-Distance calcuation needs working https
+'Distance From' calcuation for job listings needs HTTPS
 
 Add more Twilio Functionality (responding to text to make changes to a current job)
 
-Fix known front end bugs
+Fix known front end bugs + adding registration + password/phone number/address validation messages (if input invalid)
