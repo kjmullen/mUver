@@ -214,11 +214,11 @@ class Job(models.Model):
     def __str__(self):
         return self.title
 
-    # def job_complete(self):
-    #
-    #     self.status = "Job complete."
-    #     self.complete = True
-    #     self.save()
+    def job_complete(self):
+
+        self.status = "Job complete."
+        self.complete = True
+        self.save()
     # def capture_charge(self):
     #     stripe.api_key = settings.STRIPE_SECRET_KEY
     #     charge = stripe.Charge.retrieve(self.charge_id)
